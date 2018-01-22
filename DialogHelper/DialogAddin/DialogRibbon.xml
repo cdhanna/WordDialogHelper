@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab id="DialogTab" label="Dialog">
+        <group id="MyGroup"
+               label="Basic"
+               >
+          <button id="addRuleButton" label="Add Rule"
+            screentip="Text" onAction="OnAddRule"
+            supertip="Inserts text at the cursor location."/>
+
+          <button id="save" label="Save as JSON"
+            screentip="Save" onAction="OnSave"
+            supertip="Inserts text at the cursor location."/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
+
