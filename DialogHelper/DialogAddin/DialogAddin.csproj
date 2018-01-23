@@ -153,6 +153,8 @@
   -->
   <ItemGroup>
     <Compile Include="DialogRibbon.cs" />
+    <Compile Include="DialogRule.cs" />
+    <Compile Include="DialogService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -199,7 +201,7 @@
     <ManifestKeyFile>DialogAddin_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>8AB6C796C3113BF541C9B8BE65BB45FE1D0BEBC5</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>E74D0203BD7156AFAE8A7F9A3B7FAC62A3CFA6ED</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

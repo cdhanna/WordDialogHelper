@@ -33,10 +33,11 @@ namespace DialogAddin
     public class DialogRibbon : Office.IRibbonExtensibility
     {
         private Office.IRibbonUI ribbon;
+        private DialogService _srvc;
 
-        public DialogRibbon()
+        public DialogRibbon(DialogService srvc)
         {
-          
+            _srvc = srvc;
         }
 
         #region IRibbonExtensibility Members
@@ -59,41 +60,25 @@ namespace DialogAddin
 
         public void OnAddRule(Office.IRibbonControl ribbon)
         {
-            Word.Range currentRange = Globals.ThisAddIn.Application.Selection.Range;
-            currentRange.Text = "Rule:New\n";
-            currentRange.set_Style(Word.WdBuiltinStyle.wdStyleHeading1);
+            _srvc.AddEmptyRule();
+            //Globals.ThisAddIn.Application.ActiveDocument.Characters.Last.Select();
+            //Globals.ThisAddIn.Application.ActiveDocument.Range()
 
-            var end = currentRange.End ;
-            var nextRange = Globals.ThisAddIn.Application.ActiveDocument.Range(end);
-            nextRange.Text = "\nnext";
-            nextRange.set_Style(Word.WdBuiltinStyle.wdStyleNormal);
+            //Word.Range currentRange = Globals.ThisAddIn.Application.Selection.Range;
+            //currentRange.Text = "Rule:New\n";
+            //currentRange.set_Style(Word.WdBuiltinStyle.wdStyleHeading1);
+
+            //var end = currentRange.End ;
+            //var nextRange = Globals.ThisAddIn.Application.ActiveDocument.Range(end);
+            //nextRange.Text = "\nnext";
+            //nextRange.set_Style(Word.WdBuiltinStyle.wdStyleNormal);
 
         }
 
         public void OnSave(Office.IRibbonControl ribbon)
         {
-            var doc = Globals.ThisAddIn.Application.ActiveDocument;
-            var paragraphs = doc.Paragraphs;
-            foreach (Word.Paragraph p in paragraphs)
-            {
-                var text = p.Range.Text;
-                var style = p.Range.get_Style();
-                var isHeader = style.NameLocal == doc.Styles[Word.WdBuiltinStyle.wdStyleHeading1].NameLocal;
-                
-               // var isHeader = p.Range.get_Style() == Word.WdBuiltinStyle.wdStyleHeading1;
-               // var isNormal = p.Range.ParagraphStyle == Word.WdBuiltinStyle.wdStyleNormal;
-            }
-
-            var dialog = new SaveFileDialog();
-            dialog.DefaultExt = ".json";
-            dialog.AddExtension = true;
-            dialog.Filter = "JSON Files|*.json";
-            var result = dialog.ShowDialog();
-
-            if (result == DialogResult.OK)
-            {
-                var savePath = dialog.FileName;
-            }
+            _srvc.ScanDocument();
+            
 
         }
 

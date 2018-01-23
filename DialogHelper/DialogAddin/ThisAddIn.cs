@@ -11,25 +11,13 @@ namespace DialogAddin
 {
     public partial class ThisAddIn
     {
-        
+        private DialogService _srvc = new DialogService();
+
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-            this.Application.DocumentChange += Application_DocumentChange;
-            Application.DocumentOpen += Application_DocumentOpen;
-
-
         }
-
-        private void Application_DocumentOpen(Word.Document Doc)
-        {
-            
-        }
-
-        private void Application_DocumentChange()
-        {
-            var doc = this.Application.ActiveDocument;
-        }
+        
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
@@ -37,7 +25,7 @@ namespace DialogAddin
 
         protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new DialogRibbon();
+            return new DialogRibbon(_srvc);
         }
 
         #region VSTO generated code
