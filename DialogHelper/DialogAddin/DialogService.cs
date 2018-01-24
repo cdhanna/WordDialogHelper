@@ -1,5 +1,8 @@
-﻿using System;
+﻿using DialogAddin.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,9 +77,9 @@ namespace DialogAddin
 
         }
 
-        public List<ScannedRule> Scan()
+        public List<ScannedRule> Scan(Word.Document doc=null)
         {
-            var paragraphcs = ActiveDocument.Paragraphs;
+            var paragraphcs = (doc != null ? doc : ActiveDocument).Paragraphs;
             var iterator = paragraphcs.GetEnumerator();
 
             var state = ScanState.IGNORE;
@@ -102,7 +105,7 @@ namespace DialogAddin
                            allRules.Add(buildingRule);
                        }
                        buildingRule = new ScannedRule();
-                       buildingRule.Name = bundle.Text;
+                       buildingRule.Name = bundle.Text.RemoveWordNewLines();
                        state = ScanState.RULE;
                    }
                });
@@ -116,7 +119,7 @@ namespace DialogAddin
                             buildingRule.Sections.Add(buildingSection);
                         }
                         buildingSection = new ScannedRuleSection();
-                        buildingSection.Name = bundle.Text;
+                        buildingSection.Name = bundle.Text.RemoveWordNewLines();
                         state = ScanState.SECTION;
                     }
                 });
@@ -160,8 +163,21 @@ namespace DialogAddin
         }
 
         
+        public void SaveAsJson(Word.Document doc=null, string filePath=null)
+        {
+            var scanned = Scan(doc);
+            var jsonModels = scanned.ToJsonRules();
+            var json = JsonConvert.SerializeObject(jsonModels, Formatting.Indented);
 
-      
+            if (filePath == null)
+            {
+                filePath = doc.FullName.Replace(".docx", ".json");
+            }
+
+            File.WriteAllText(filePath, json);
+
+        }
+
 
         private Bundle GetBundle(Word.Paragraph p)
         {

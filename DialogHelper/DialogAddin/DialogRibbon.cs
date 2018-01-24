@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DialogAddin.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +36,7 @@ namespace DialogAddin
     {
         private Office.IRibbonUI ribbon;
         private DialogService _srvc;
+        SaveFileDialog saveDialog = new SaveFileDialog();
 
         public DialogRibbon(DialogService srvc)
         {
@@ -77,9 +80,21 @@ namespace DialogAddin
 
         public void OnSave(Office.IRibbonControl ribbon)
         {
-            _srvc.Scan();
-            
+            //var scanned = _srvc.Scan();
+            //var jsonModels = scanned.ToJsonRules();
+            //var json = JsonConvert.SerializeObject(jsonModels, Formatting.Indented);
 
+            saveDialog.Filter = "JSON Files (*.json)|*.json";
+            saveDialog.RestoreDirectory = true;
+            saveDialog.AddExtension = true;
+
+            var result = saveDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _srvc.SaveAsJson(_srvc.ActiveDocument, saveDialog.FileName);
+                //File.WriteAllText(saveDialog.FileName, json);
+            }
+             
         }
 
         #endregion

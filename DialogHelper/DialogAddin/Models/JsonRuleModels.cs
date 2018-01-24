@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DialogAddin
+namespace DialogAddin.Models
 {
     public class DialogRule
     {
@@ -63,5 +63,11 @@ namespace DialogAddin
             };
             return output;
         }
+
+        public static List<DialogRule> ToJsonRules(this List<ScannedRule> rules)
+        {
+            return rules.Select(r => r.ToJsonRule()).ToList();
+        }
+
     }
 }
