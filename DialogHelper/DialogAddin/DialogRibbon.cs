@@ -77,7 +77,7 @@ namespace DialogAddin
 
         public void OnSave(Office.IRibbonControl ribbon)
         {
-            _srvc.ScanDocument();
+            _srvc.Scan();
             
 
         }

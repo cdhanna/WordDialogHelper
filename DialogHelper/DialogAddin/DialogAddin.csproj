@@ -106,6 +106,10 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -153,7 +157,8 @@
   -->
   <ItemGroup>
     <Compile Include="DialogRibbon.cs" />
-    <Compile Include="DialogRule.cs" />
+    <Compile Include="JsonRuleModels.cs" />
+    <Compile Include="ScanRuleModels.cs" />
     <Compile Include="DialogService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -168,6 +173,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="DialogAddin_TemporaryKey.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -201,7 +207,7 @@
     <ManifestKeyFile>DialogAddin_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>E74D0203BD7156AFAE8A7F9A3B7FAC62A3CFA6ED</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>8AB6C796C3113BF541C9B8BE65BB45FE1D0BEBC5</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

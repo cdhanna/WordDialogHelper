@@ -74,85 +74,94 @@ namespace DialogAddin
 
         }
 
-        public void ScanDocument()
+        public List<ScannedRule> Scan()
         {
-            var paragraphs = ActiveDocument.Paragraphs;
+            var paragraphcs = ActiveDocument.Paragraphs;
+            var iterator = paragraphcs.GetEnumerator();
 
-            var enumerator = paragraphs.GetEnumerator();
-            while (enumerator.MoveNext())
+            var state = ScanState.IGNORE;
+            var allRules = new List<ScannedRule>();
+            ScannedRule buildingRule = null;
+            ScannedRuleSection buildingSection = null;
+
+            while (iterator.MoveNext())
             {
-                var current = enumerator.Current as Word.Paragraph;
-                if (current == null)
-                {
-                    throw new InvalidOperationException("Could not parse bad paragraph");
-                }
-                var next = new Action(() =>
+                var current = iterator.Current as Word.Paragraph;
+                var bundle = GetBundle(current);
+
+                var handleRule = new Action(() =>
                {
-                   if (!enumerator.MoveNext())
+                    if (bundle.IsHeader)
                    {
-                       throw new InvalidOperationException("Ran out of content to consume, while epxecting displayAs");
-                   }
-                   current = enumerator.Current as Word.Paragraph;
-                   if (current == null)
-                   {
-                       throw new InvalidOperationException("Could not parse bad paragraph");
+                       if (buildingRule != null)
+                       {
+                           if (buildingSection != null)
+                           {
+                               buildingRule.Sections.Add(buildingSection);
+                           }
+                           allRules.Add(buildingRule);
+                       }
+                       buildingRule = new ScannedRule();
+                       buildingRule.Name = bundle.Text;
+                       state = ScanState.RULE;
                    }
                });
 
-                var getNormal = new Func<string>(() =>
-               {
-                   var output = "";
-                   next();
-
-                   var b = GetBundle(current);
-                   while (b.IsNormal || (!b.IsHeader && !b.IsSection))
-                   {
-                       output += b.Text;
-                       next();
-                       b = GetBundle(current);
-                   }
-
-                   return output;
-               });
-
-                var header = GetBundle(current);
-                
-                if (string.IsNullOrEmpty(header.Text))
+                var handleSection = new Action(() =>
                 {
-                    continue;
+                    if (bundle.IsSection)
+                    {
+                        if (buildingSection != null && buildingRule != null)
+                        {
+                            buildingRule.Sections.Add(buildingSection);
+                        }
+                        buildingSection = new ScannedRuleSection();
+                        buildingSection.Name = bundle.Text;
+                        state = ScanState.SECTION;
+                    }
+                });
+
+                switch (state)
+                {
+                    case ScanState.SECTION:
+
+                        if (!bundle.IsSection && !bundle.IsHeader)
+                        {
+                            if (buildingSection != null)
+                            {
+                                buildingSection.Content += bundle.Text;
+                                
+
+                            }
+                        }
+                        handleSection();
+                        handleRule();
+                      
+                        break;
+                    case ScanState.RULE:
+                        handleSection();
+                        break;
+                    default:
+                        handleRule();
+                        break;
                 }
 
-                if (!header.IsHeader)
-                {
-                    throw new InvalidOperationException("Was expecting a headline");
-                }
-
-                next();
-                var displayAs = GetBundle(current);
-                var displayText = getNormal();
-
-                var preConditions = GetBundle(current);
-                var conditions = getNormal();
-
-                var dialogLabel = GetBundle(current);
-                var dialogs = getNormal();
-
-                var outcomeLabel = GetBundle(current);
-                var outcomes = getNormal();
             }
-            
+            if (buildingRule != null)
+            {
+                if (buildingSection != null)
+                {
+                    buildingRule.Sections.Add(buildingSection);
+                }
+                allRules.Add(buildingRule);
+            }
 
-            //var dialog = new SaveFileDialog();
-            //dialog.DefaultExt = ".json";
-            //dialog.AddExtension = true;
-            //dialog.Filter = "JSON Files|*.json";
-            //var result = dialog.ShowDialog();
-
-            //if (result == DialogResult.OK)
-            //{
-            //    var savePath = dialog.FileName;
-            //}
+            return allRules;
         }
+
+        
+
+      
 
         private Bundle GetBundle(Word.Paragraph p)
         {
@@ -176,6 +185,12 @@ namespace DialogAddin
         {
             public string Text;
             public bool IsHeader, IsNormal, IsSection;
+        }
+
+        enum ScanState {
+            IGNORE,
+            RULE,
+            SECTION
         }
     }
 }
