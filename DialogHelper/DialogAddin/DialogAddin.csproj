@@ -197,6 +197,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="DialogAddin_1_TemporaryKey.pfx" />
+    <None Include="DialogAddin_2_TemporaryKey.pfx" />
     <None Include="DialogAddin_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -230,10 +231,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>DialogAddin_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>DialogAddin_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>93144112C4885BB60760173024CE4607E92026C3</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>8405B4012D94081912B48845D9BAACD86E4FC370</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
