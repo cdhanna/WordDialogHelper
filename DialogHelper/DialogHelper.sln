@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogAddin", "DialogAddin\DialogAddin.csproj", "{58E65B14-8154-4548-B698-AF7987B20DE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialog", "Dialog\Dialog.csproj", "{D7EAC003-9933-4ABB-9361-77E6F3DD9796}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogTests", "DialogTests\DialogTests.csproj", "{87D3ADD5-A051-496F-A4E2-34FD506E3BD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{58E65B14-8154-4548-B698-AF7987B20DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58E65B14-8154-4548-B698-AF7987B20DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58E65B14-8154-4548-B698-AF7987B20DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7EAC003-9933-4ABB-9361-77E6F3DD9796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7EAC003-9933-4ABB-9361-77E6F3DD9796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7EAC003-9933-4ABB-9361-77E6F3DD9796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7EAC003-9933-4ABB-9361-77E6F3DD9796}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87D3ADD5-A051-496F-A4E2-34FD506E3BD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87D3ADD5-A051-496F-A4E2-34FD506E3BD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87D3ADD5-A051-496F-A4E2-34FD506E3BD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87D3ADD5-A051-496F-A4E2-34FD506E3BD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
