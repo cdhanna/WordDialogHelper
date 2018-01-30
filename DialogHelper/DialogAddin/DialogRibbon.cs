@@ -64,17 +64,6 @@ namespace DialogAddin
         public void OnAddRule(Office.IRibbonControl ribbon)
         {
             _srvc.AddEmptyRule();
-            //Globals.ThisAddIn.Application.ActiveDocument.Characters.Last.Select();
-            //Globals.ThisAddIn.Application.ActiveDocument.Range()
-
-            //Word.Range currentRange = Globals.ThisAddIn.Application.Selection.Range;
-            //currentRange.Text = "Rule:New\n";
-            //currentRange.set_Style(Word.WdBuiltinStyle.wdStyleHeading1);
-
-            //var end = currentRange.End ;
-            //var nextRange = Globals.ThisAddIn.Application.ActiveDocument.Range(end);
-            //nextRange.Text = "\nnext";
-            //nextRange.set_Style(Word.WdBuiltinStyle.wdStyleNormal);
 
         }
 
@@ -95,6 +84,12 @@ namespace DialogAddin
                 //File.WriteAllText(saveDialog.FileName, json);
             }
              
+        }
+
+        public void OnValidate(Office.IRibbonControl ribbon)
+        {
+            _srvc.EraseComments();
+            _srvc.Validate();
         }
 
         #endregion

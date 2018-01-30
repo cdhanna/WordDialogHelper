@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dialog;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,32 +8,7 @@ using System.Threading.Tasks;
 
 namespace DialogAddin.Models
 {
-    public class DialogRule
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("displayAs")]
-        public string DisplayAs { get; set; }
-
-        [JsonProperty("conditions")]
-        public string[] Conditions { get; set; }
-
-        [JsonProperty("outcomes")]
-        public string[] Outcomes { get; set; }
-
-        [JsonProperty("dialog")]
-        public DialogPart[] Dialog { get; set; }
-
-        public class DialogPart
-        {
-            [JsonProperty("speaker")]
-            public string Speaker { get; set; }
-
-            [JsonProperty("text")]
-            public string Content { get; set; }
-        }
-    }
+    
 
     public static class ScanConverterExtensions
     {
@@ -43,28 +19,75 @@ namespace DialogAddin.Models
             {
                 return "__notfound__";
             }
-            else return section.Content;
+            else return section.Content == null ? "" : section.Content;
         }
+        
 
-        public static DialogRule ToJsonRule(this ScannedRule rule)
+        public static JsonRule ToJsonRule(this ScannedRule rule)
         {
-            var output = new DialogRule()
+
+            /*
+             * :name:
+             * content
+             * 
+             * :othername:
+             * more content
+             * 
+             * 
+             */
+
+            var rawDialog = rule.GetContentFromSection(DialogService.SECTION_DIALOGS);
+            if (rawDialog == null) rawDialog = "";
+
+            var rawDialogLines = rawDialog.Split('\r');
+            string speaker = null;
+            var speakerLines = "";
+            var dialogParts = new List<JsonRule.DialogPart>();
+            for(var i = 0; i < rawDialogLines.Length; i++)
             {
-                Name = rule.Name,
-                DisplayAs = rule.GetContentFromSection(DialogService.SECTION_DISPLAYAS),
-                Conditions = rule.GetContentFromSection(DialogService.SECTION_PRECONDITIONS).Split('\r'),
-                Outcomes = rule.GetContentFromSection(DialogService.SECTION_OUTCOMES).Split('\r'),
-                Dialog = new DialogRule.DialogPart[]{
-                     new DialogRule.DialogPart() {
-                        Content = rule.GetContentFromSection(DialogService.SECTION_DIALOGS),
-                        Speaker = "Universe"
-                     }
+                var line = rawDialogLines[i];
+                if (line.StartsWith(":"))
+                {
+                    if (speaker != null)
+                    {
+                        dialogParts.Add(new JsonRule.DialogPart() {
+                            Id = Guid.NewGuid(),
+                            Speaker = speaker,
+                            Content = speakerLines
+                        });
+                    }
+
+
+                    speaker = line;
+                    speakerLines = "";
+                } else
+                {
+                    speakerLines += line + '\n';
                 }
+            }
+            if (speaker != null)
+            {
+                dialogParts.Add(new JsonRule.DialogPart()
+                {
+                    Id = Guid.NewGuid(),
+                    Speaker = speaker,
+                    Content = speakerLines
+                });
+            }
+
+            var output = new JsonRule()
+            {
+                Id = rule.Id,
+                Name = rule.Name,
+                DisplayAs = rule.GetContentFromSection(DialogService.SECTION_DISPLAYAS).Replace('\r', '\n'),
+                Conditions = rule.GetContentFromSection(DialogService.SECTION_PRECONDITIONS).Replace('\r', '\n').Split('\n'),
+                Outcomes = rule.GetContentFromSection(DialogService.SECTION_OUTCOMES).Replace('\r', '\n').Split('\n'),
+                Dialog = dialogParts.ToArray()
             };
             return output;
         }
 
-        public static List<DialogRule> ToJsonRules(this List<ScannedRule> rules)
+        public static List<JsonRule> ToJsonRules(this List<ScannedRule> rules)
         {
             return rules.Select(r => r.ToJsonRule()).ToList();
         }

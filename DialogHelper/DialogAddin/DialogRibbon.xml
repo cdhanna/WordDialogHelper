@@ -8,11 +8,15 @@
                >
           <button id="addRuleButton" label="Add Rule"
             screentip="Text" onAction="OnAddRule"
-            supertip="Inserts text at the cursor location."/>
+            supertip="Adds a blank rule to the end of the document."/>
 
           <button id="save" label="Save as JSON"
             screentip="Save" onAction="OnSave"
-            supertip="Inserts text at the cursor location."/>
+            supertip="Saves the document as rule JSON."/>
+
+          <button id="validate" label="Validate all Rules"
+           screentip="Validate" onAction="OnValidate"
+           supertip="Checks all rules to make sure they are valid."/>
         </group>
       </tab>
     </tabs>

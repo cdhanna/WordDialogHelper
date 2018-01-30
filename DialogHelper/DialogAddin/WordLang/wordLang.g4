@@ -1,0 +1,3 @@
+﻿grammar WordLang;
+
+prog: EOF ;

@@ -17,10 +17,10 @@ namespace DialogAddin
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             // attach the save handler
-            wsh = new WordSaveHandler(Application);
-            wsh.AfterAutoSaveEvent += Wsh_AfterAutoSaveEvent;
-            wsh.AfterSaveEvent += Wsh_AfterAutoSaveEvent;
-            wsh.AfterUiSaveEvent += Wsh_AfterAutoSaveEvent;
+            //wsh = new WordSaveHandler(Application);
+            //wsh.AfterAutoSaveEvent += Wsh_AfterAutoSaveEvent;
+            //wsh.AfterSaveEvent += Wsh_AfterAutoSaveEvent;
+            //wsh.AfterUiSaveEvent += Wsh_AfterAutoSaveEvent;
         }
 
         private void Wsh_AfterAutoSaveEvent(Word.Document doc, bool isClosed)

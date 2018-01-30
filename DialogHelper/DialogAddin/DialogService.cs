@@ -1,4 +1,6 @@
-﻿using DialogAddin.Models;
+﻿using Dialog;
+using Dialog.Validation;
+using DialogAddin.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ namespace DialogAddin
         public const string SECTION_DIALOGS = "Dialogs";
         public const string SECTION_OUTCOMES = "Outcomes";
 
+        public const string SYSTEM_NAME = "DialogToolkit";
 
         public Word.Document ActiveDocument { get { return Globals.ThisAddIn.Application.ActiveDocument; } }
         public Word.Range EndOfDocument { get { return ActiveDocument.Range(ActiveDocument.Characters.Last.Start); } }
@@ -26,7 +29,9 @@ namespace DialogAddin
         public Word.Style RuleSubSectionStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleHeading3]; } }
         public Word.Style RuleNormalStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleNormal]; } }
 
-        
+
+        public List<Word.Comment> Comments { get; set; } = new List<Word.Comment>();
+
         //public Word.Range NextRange(Word.Range toFinish=null)
         //{
         //    if (toFinish == null) toFinish = EndOfDocument;
@@ -79,7 +84,11 @@ namespace DialogAddin
 
         public List<ScannedRule> Scan(Word.Document doc=null)
         {
-            var paragraphcs = (doc != null ? doc : ActiveDocument).Paragraphs;
+            if (doc == null)
+            {
+                doc = ActiveDocument;
+            }
+            var paragraphcs = doc.Paragraphs;
             var iterator = paragraphcs.GetEnumerator();
 
             var state = ScanState.IGNORE;
@@ -106,6 +115,7 @@ namespace DialogAddin
                        }
                        buildingRule = new ScannedRule();
                        buildingRule.Name = bundle.Text.RemoveWordNewLines();
+                       buildingRule.Start = current.Range.Start;
                        state = ScanState.RULE;
                    }
                });
@@ -120,6 +130,7 @@ namespace DialogAddin
                         }
                         buildingSection = new ScannedRuleSection();
                         buildingSection.Name = bundle.Text.RemoveWordNewLines();
+                        buildingSection.Start = current.Range.Start;
                         state = ScanState.SECTION;
                     }
                 });
@@ -159,8 +170,12 @@ namespace DialogAddin
                 allRules.Add(buildingRule);
             }
 
+            allRules.ForEach(r => r.Document = doc);
+
             return allRules;
         }
+
+        
 
         
         public void SaveAsJson(Word.Document doc=null, string filePath=null)
@@ -178,6 +193,87 @@ namespace DialogAddin
 
         }
 
+        public void EraseComments(Word.Document doc = null)
+        {
+            if (doc == null)
+            {
+                doc = ActiveDocument;
+            }
+
+            var toDelete = new List<Word.Comment>();
+            foreach(Word.Comment comment in doc.Comments)
+            {
+                if (comment.Author.Equals(SYSTEM_NAME))
+                {
+                    toDelete.Add(comment);
+                }
+            }
+            toDelete.ForEach(c => c.DeleteRecursively());
+
+        }
+
+        public void Validate(List<ScannedRule> rules=null)
+        {
+            if (rules == null)
+            {
+                rules = Scan();
+            }
+
+            var jsonRules = rules.ToJsonRules();
+            var id2ScanRule = rules.ToDictionary(rule => rule.Id);
+            var id2JsonRule = jsonRules.ToDictionary(rule => rule.Id);
+
+            var validator = new RuleValidator();
+            var result = validator.ValidateRules(jsonRules);
+
+            AddValidationComments(id2ScanRule, id2JsonRule, result.NameErrors, "");
+            AddValidationComments(id2ScanRule, id2JsonRule, result.DialogErrors, SECTION_DIALOGS);
+            AddValidationComments(id2ScanRule, id2JsonRule, result.DisplayAsErrors, SECTION_DISPLAYAS);
+
+        }
+
+        private void AddValidationComments(Dictionary<Guid, ScannedRule> id2ScanRule, Dictionary<Guid, JsonRule> id2JsonRule, List<ValidationError> errors, string sectionTitle)
+        {
+            var noSection = new ScannedRuleSection()
+            {
+                Content = "",
+                Name = "",
+                Start = 0
+            };
+
+            foreach (var error in errors)
+            {
+                var scanRule = id2ScanRule[error.RuleId];
+                var jsonRule = id2JsonRule[error.RuleId];
+                var scanSection = scanRule.Sections.FirstOrDefault(s => s.Name.Equals(sectionTitle));
+                if (scanSection == null)
+                {
+                    scanSection = noSection;
+                }
+
+
+                var rangeStart = scanSection.Start + error.Offset;
+
+                if (error.Offset < 0)
+                {
+                    rangeStart = scanSection.Start + Math.Abs(error.Offset);
+                } else
+                {
+                    rangeStart = scanSection.Start + error.Offset + sectionTitle.Length; // add one for the new line
+                }
+                //rangeStart += 1;
+
+                var rangeEnd = rangeStart + error.Length;
+                var errorRange = scanRule.Document.Range(rangeStart, rangeEnd);
+
+                //var x = new wordLangVisitor
+
+                object message = error.Message;
+                var comment = scanRule.Document.Comments.Add(errorRange, ref message);
+                comment.Author = SYSTEM_NAME;
+                comment.ShowTip = true;
+            }
+        }
 
         private Bundle GetBundle(Word.Paragraph p)
         {
