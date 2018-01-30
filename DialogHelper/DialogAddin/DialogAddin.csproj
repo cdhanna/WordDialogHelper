@@ -192,6 +192,8 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WordLang\StandardErrorListener.cs" />
+    <Compile Include="WordLang\WordLangStringVisitor.cs" />
     <Compile Include="WordSaveHandler.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -226,6 +228,7 @@
     <Antlr4 Include="WordLang\WordLang.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>DialogAddin.WordLang</CustomToolNamespace>
+      <ForceAtn>True</ForceAtn>
     </Antlr4>
   </ItemGroup>
   <ItemGroup>
