@@ -7,8 +7,20 @@ using Antlr4.Runtime.Misc;
 
 namespace DialogAddin.WordLang
 {
-    public class WordLangStringVisitor : WordLangBaseVisitor<object>
+    public class WordLangStringVisitor : WordLangBaseVisitor<string>
     {
+
+        public override string VisitProg([NotNull] WordLangParser.ProgContext context)
+        {
+            var rules = context.rule();
+            var ruleStrings = rules.ToList().Select(r => Visit(r)).ToList();
+
+            var str = "(prog ";
+            ruleStrings.ForEach(r => str += r);
+            str += ")";
+
+            return str;
+        }
 
         //public override object VisitRuleSet([NotNull] WordLangParser.RuleSetContext context)
         //{
@@ -16,19 +28,41 @@ namespace DialogAddin.WordLang
         //    return base.VisitRuleSet(context);
         //}
 
-        public override object VisitRule([NotNull] WordLangParser.RuleContext context)
+        public override string VisitRule([NotNull] WordLangParser.RuleContext context)
         {
-            var text = context.GetText();
+            var text = context.GetText().Replace("\r", "").Replace("\n", "");
+
+            var title = Visit(context.ruleTitle());
+            var displayAs = Visit(context.displayAs());
+
+            VisitConditions(context.conditions());
+
             //context.ruleTitle();
-            return base.VisitRule(context);
+            return $"(rule title={title}, disp={displayAs})";
         }
 
-        //public override object VisitRuleTitle([NotNull] WordLangParser.RuleTitleContext context)
-        //{
-        //    var title = context.GetText();
+        public override string VisitRuleTitle([NotNull] WordLangParser.RuleTitleContext context)
+        {
+            return context.TEXT().GetText();
+        }
 
-        //    return base.VisitRuleTitle(context);
-        //}
+        public override string VisitDisplayAs([NotNull] WordLangParser.DisplayAsContext context)
+        {
+            return context.TEXT().GetText();
+        }
+
+        public override string VisitConditions([NotNull] WordLangParser.ConditionsContext context)
+        {
+            return base.VisitConditions(context);
+        }
+
+        public override string VisitSingleCondition([NotNull] WordLangParser.SingleConditionContext context)
+        {
+
+            context.TE
+
+            return base.VisitSingleCondition(context);
+        }
 
     }
 }
