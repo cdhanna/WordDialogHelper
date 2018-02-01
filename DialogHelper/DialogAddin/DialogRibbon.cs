@@ -92,6 +92,12 @@ namespace DialogAddin
             _srvc.Validate();
         }
 
+        public void OnAntlrTest(Office.IRibbonControl ribbon)
+        {
+            _srvc.EraseComments();
+            _srvc.ScanAndValidate();
+        }
+
         #endregion
 
         #region Helpers

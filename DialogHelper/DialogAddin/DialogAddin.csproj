@@ -193,6 +193,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WordLang\StandardErrorListener.cs" />
+    <Compile Include="WordLang\WordLangModelVisitor.cs" />
     <Compile Include="WordLang\WordLangResults.cs" />
     <Compile Include="WordLang\WordLangStringVisitor.cs" />
     <Compile Include="WordSaveHandler.cs" />

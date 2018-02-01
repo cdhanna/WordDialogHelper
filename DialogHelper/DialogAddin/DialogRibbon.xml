@@ -17,6 +17,10 @@
           <button id="validate" label="Validate all Rules"
            screentip="Validate" onAction="OnValidate"
            supertip="Checks all rules to make sure they are valid."/>
+          
+          <button id="validateTest" label="Try Antlr"
+           screentip="ValidateTest" onAction="OnAntlrTest"
+           supertip="Checks all rules to make sure they are valid."/>
         </group>
       </tab>
     </tabs>

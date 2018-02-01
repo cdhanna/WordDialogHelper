@@ -42,8 +42,34 @@ namespace DialogAddin.WordLang
 
             var conditions = VisitConditions(context.conditions());
 
+            var dialogs = VisitDialogs(context.dialogs());
+            var outcomes = VisitOutcomes(context.outcomes());
             //context.ruleTitle();
-            return $"(rule title={title}, disp={displayAs}, conds={conditions})";
+            return $"(rule title={title}, disp={displayAs}, conds={conditions}, dialogs={dialogs}, outcomes={outcomes})";
+        }
+
+        public override string VisitDialogs([NotNull] WordLangParser.DialogsContext context)
+        {
+            var lines = context.dialogLine().Select(d => VisitDialogLine(d));
+            return lines.Aggregate("[", (agg, curr) => agg + " " + curr) + " ]";
+        }
+
+        public override string VisitDialogLine([NotNull] WordLangParser.DialogLineContext context)
+        {
+            var speaker = context.dialogLineSpeaker().NAME().GetText();
+            var text = context.dialogLineText().Select(d => d.GetText()).Aggregate("", (agg, curr) => agg + curr);
+            return $"({speaker} says {text})";
+        }
+
+        public override string VisitOutcomes([NotNull] WordLangParser.OutcomesContext context)
+        {
+            var outcomes = context.singleOutcome().Select(o => VisitSingleOutcome(o));
+            return outcomes.Aggregate("[", (agg, curr) => agg + " " + curr) + " ]";
+        }
+
+        public override string VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
+        {
+            return $"({context.expr().GetText()})";
         }
 
         public override string VisitRuleTitle([NotNull] WordLangParser.RuleTitleContext context)

@@ -74,13 +74,17 @@ tunafish rep
 conditions    
 yaday first is blahblah some more   
 another line of fun = twice the pain 
+dialogs
+:player1
+speaking line text
+multi line
 
-party House
-displayAs
-toothe paste time
-conditions
-x is y
+:player2
 
+something meaningful
+outcomes
+doit
+doit again
 ";
             // if thething is theotherthing:
             // muffin is true
@@ -88,7 +92,7 @@ x is y
             var program = new WordLangResults(src);
             var visitor = new WordLangStringVisitor();
 
-            var tree = program.ProgramContext.ToStringTree();
+            //var tree = program.ProgramContext.ToStringTree();
 
             var result = visitor.Visit(program.ProgramContext);
 

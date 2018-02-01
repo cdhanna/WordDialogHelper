@@ -15,6 +15,7 @@ namespace DialogAddin.WordLang
 
         public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
         {
+            
             Errors.Add(new GeneralError()
             {
                 Line = line,

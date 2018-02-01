@@ -15,7 +15,7 @@ b is c
 prog: rule+ EOF;
 
 rule
-	: ruleTitle displayAs conditions
+	: ruleTitle displayAs conditions dialogs outcomes
 	;
 
 ruleTitle
@@ -28,6 +28,30 @@ displayAs
 
 conditions	
 	: CONDITIONS NEWLINE singleCondition*
+	;
+
+dialogs
+	: DIALOGS NEWLINE dialogLine*
+	;
+
+outcomes
+	: OUTCOMES NEWLINE singleOutcome*
+	;
+
+singleOutcome
+	: expr NEWLINE
+	;
+
+dialogLine
+	: dialogLineSpeaker NEWLINE dialogLineText* NEWLINE
+	;
+
+dialogLineSpeaker
+	: COLON NAME
+	;
+
+dialogLineText
+	: (NAME WHITESPACE? NEWLINE?)+ 
 	;
 
 singleCondition
@@ -57,6 +81,8 @@ COLON : ':';
 
 DISPLAYAS	: D I S P L A Y   A S SPACE*;
 CONDITIONS	: C O N D I T I O N S SPACE*; 
+DIALOGS		: D I A L O G S       SPACE*;
+OUTCOMES	: O U T C O M E S     SPACE*;
 
 WHITESPACE          : (' '|'\t')+ ;
 
@@ -89,3 +115,8 @@ C : ('C'|'c');
 O : ('O'|'o');
 N : ('N'|'n');
 T : ('T'|'t');
+
+G : ('G'|'g');
+U : ('U'|'u');
+M : ('M'|'m');
+E : ('E'|'e');

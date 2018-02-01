@@ -1,6 +1,7 @@
 ﻿using Dialog;
 using Dialog.Validation;
 using DialogAddin.Models;
+using DialogAddin.WordLang;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace DialogAddin
     public class DialogService
     {
         public const string SECTION_DISPLAYAS = "DisplayAs";
-        public const string SECTION_PRECONDITIONS = "PreConditions";
+        public const string SECTION_PRECONDITIONS = "Conditions";
         public const string SECTION_DIALOGS = "Dialogs";
         public const string SECTION_OUTCOMES = "Outcomes";
 
@@ -90,6 +91,12 @@ namespace DialogAddin
             }
             var paragraphcs = doc.Paragraphs;
             var iterator = paragraphcs.GetEnumerator();
+
+            var allText = doc.Range().Text;
+            var result = new WordLangResults(allText);
+            var treeVisitor = new WordLangStringVisitor();
+            var treeText = treeVisitor.Visit(result.ProgramContext);
+
 
             var state = ScanState.IGNORE;
             var allRules = new List<ScannedRule>();
@@ -175,9 +182,51 @@ namespace DialogAddin
             return allRules;
         }
 
-        
+        public void ScanAndValidate()
+        {
+            ActiveDocument.Range(0, 5).Bold = 1;
 
-        
+            var allText = ActiveDocument.Range().Text;
+            var result = new WordLangResults(allText);
+
+            var line2RangeStart = new List<int>();
+            line2RangeStart.Add(0);
+            for (var i = 0; i < allText.Length; i++)
+            {
+                var c = allText[i];
+                if (c == '\r')
+                {
+                    line2RangeStart.Add(i);
+                }
+            }
+
+            result.ParserErrors.Errors.ForEach(err =>
+            {
+                //allLines[err.Line]
+                var rangeStart = line2RangeStart[err.Line-1] + err.CharPosition ;
+
+                object message = err.Message;
+                var comment = ActiveDocument.Comments.Add(ActiveDocument.Range(rangeStart, rangeStart + 1), ref message);
+                comment.Author = SYSTEM_NAME;
+                comment.ShowTip = true;
+
+            });
+
+            if (result.ParserErrors.AnyErrors == false)
+            {
+                var v = new RulesVisitor();
+                var rules = v.VisitProg(result.ProgramContext);
+            }
+
+           
+
+            //var treeVisitor = new WordLangStringVisitor();
+            //var treeText = treeVisitor.Visit(result.ProgramContext);
+
+        }
+
+
+
         public void SaveAsJson(Word.Document doc=null, string filePath=null)
         {
             var scanned = Scan(doc);
