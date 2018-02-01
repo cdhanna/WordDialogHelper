@@ -1,5 +1,13 @@
 ﻿grammar WordLang;
 
+/*
+
+SampleRule
+conditions
+x is y
+b is c
+
+*/
 
 /*
  * Parser Rules
@@ -11,56 +19,73 @@ rule
 	;
 
 ruleTitle
-	: TEXT NEWLINE
+	: expr NEWLINE
 	;
 
 displayAs
-	: DISPLAYAS NEWLINE TEXT NEWLINE
+	: DISPLAYAS NEWLINE expr NEWLINE
 	;
 
 conditions	
-	: CONDITIONS NEWLINE singleCondition
+	: CONDITIONS NEWLINE singleCondition*
 	;
 
 singleCondition
-	: TEXT EQUALTO NEWLINE
+	: comparison NEWLINE
 	;
 
+comparison
+	: expr (comparisonOp WHITESPACE expr)
+	//: expr (expr SPACE?)? ( comparisonOp  expr*)
+	;
+
+comparisonOp
+	: EQUALTO
+	;
+
+expr: (NAME WHITESPACE?)+;
+
+	//;
+// prompt sender IS ana
 /*
  * Lexer Rules
  */
 
 
-fragment D : ('D'|'d');
-fragment I : ('I'|'i');
-fragment S : ('S'|'s');
-fragment P : ('P'|'p');
-fragment L : ('L'|'l');
-fragment A : ('A'|'a');
-fragment Y : ('Y'|'y');
 
-fragment C : ('C'|'c');
-fragment O : ('O'|'o');
-fragment N : ('N'|'n');
-fragment T : ('T'|'t');
-
+COLON : ':';
 
 DISPLAYAS	: D I S P L A Y   A S SPACE*;
 CONDITIONS	: C O N D I T I O N S SPACE*; 
 
+WHITESPACE          : (' '|'\t')+ ;
 
-fragment SPACE		: ' ';
-fragment LOWERCASE  : [a-z] ;
-fragment UPPERCASE  : [A-Z] ;
 
-EQUALTO		: I S;
-REF
-	: TEXT*? EQUALTO
-	;
-TEXT 
-	: (LOWERCASE | UPPERCASE | SPACE)+ 
+EQUALTO		: 'is'|'=';
+
+NAME
+	: [a-zA-Z_] [a-zA-Z0-9_]*
 	;
 
-WHITESPACE          : (' '|'\t')+ -> skip ;
-NEWLINE             : ('\r'? '\n' | '\r')+ ;
+SPACE		: ' ';
+LOWERCASE  : [a-z] ;
+UPPERCASE  : [A-Z] ;
 
+
+//TEXT 
+//	: (LOWERCASE | UPPERCASE | SPACE)+ 
+//	;
+
+NEWLINE             : ('\r'? '\n' | '\r')+ ; 
+D : ('D'|'d');
+I : ('I'|'i');
+S : ('S'|'s');
+P : ('P'|'p');
+L : ('L'|'l');
+A : ('A'|'a');
+Y : ('Y'|'y');
+
+C : ('C'|'c');
+O : ('O'|'o');
+N : ('N'|'n');
+T : ('T'|'t');

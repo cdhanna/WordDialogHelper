@@ -68,13 +68,22 @@ namespace DialogTests.Parsing
         [TestMethod]
         public void ValidRule()
         {
-            var src = @"ruleTitle with multiple words
-displayAs    
-hello World
+            var src = @"a nifty rule
+displayAs 
+tunafish rep
+conditions    
+yaday first is blahblah some more   
+another line of fun = twice the pain 
 
-conditions 
-a is
+party House
+displayAs
+toothe paste time
+conditions
+x is y
+
 ";
+            // if thething is theotherthing:
+            // muffin is true
 
             var program = new WordLangResults(src);
             var visitor = new WordLangStringVisitor();

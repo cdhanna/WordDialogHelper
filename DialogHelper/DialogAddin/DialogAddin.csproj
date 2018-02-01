@@ -229,7 +229,7 @@
     <Antlr4 Include="WordLang\WordLang.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>DialogAddin.WordLang</CustomToolNamespace>
-      <ForceAtn>False</ForceAtn>
+      <ForceAtn>True</ForceAtn>
     </Antlr4>
   </ItemGroup>
   <ItemGroup>
