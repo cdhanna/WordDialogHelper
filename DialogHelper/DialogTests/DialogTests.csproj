@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="Parsing\LexingWordLang.cs" />
     <Compile Include="Parsing\ToTreeTests.cs" />
-    <Compile Include="ValidationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
