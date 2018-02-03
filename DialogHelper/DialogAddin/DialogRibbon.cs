@@ -97,10 +97,14 @@ namespace DialogAddin
 
         public void OnValidate(Office.IRibbonControl ribbon)
         {
-            
             _srvc.ScanForJson();
         }
-        
+
+        public void OnCheckVersion(Office.IRibbonControl ribbon)
+        {
+            MessageBox.Show("VERSION " + AddinVersion.VERSION);
+        }
+
 
         #endregion
 

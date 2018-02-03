@@ -185,6 +185,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="AddinVersion.cs" />
     <Compile Include="DialogRibbon.cs" />
     <Compile Include="Models\JsonRuleModels.cs" />
     <Compile Include="Models\ScanRuleModels.cs" />

@@ -19,6 +19,10 @@
            supertip="Checks all rules to make sure they are valid."/>
           
         </group>
+        <group id="HelpGroup" label="About">
+          <button id="checkVersion" label="Check Version"
+                  screentip="Version" onAction="OnCheckVersion"/>
+        </group>
       </tab>
     </tabs>
   </ribbon>
