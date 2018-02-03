@@ -92,10 +92,10 @@ namespace DialogAddin
             var paragraphcs = doc.Paragraphs;
             var iterator = paragraphcs.GetEnumerator();
 
-            var allText = doc.Range().Text;
-            var result = new WordLangResults(allText);
-            var treeVisitor = new WordLangStringVisitor();
-            var treeText = treeVisitor.Visit(result.ProgramContext);
+            //var allText = doc.Range().Text;
+            //var result = new WordLangResults(allText);
+            //var treeVisitor = new WordLangStringVisitor();
+            //var treeText = treeVisitor.Visit(result.ProgramContext);
 
 
             var state = ScanState.IGNORE;
@@ -182,12 +182,16 @@ namespace DialogAddin
             return allRules;
         }
 
-        public void ScanAndValidate()
+        public string ScanForJson(Word.Document doc=null)
         {
-            ActiveDocument.Range(0, 5).Bold = 1;
+            if (doc == null) doc = ActiveDocument;
 
-            var allText = ActiveDocument.Range().Text;
+            EraseComments(doc);
+
+            var allText = doc.Range().Text;
             var result = new WordLangResults(allText);
+
+            
 
             var line2RangeStart = new List<int>();
             line2RangeStart.Add(0);
@@ -206,7 +210,7 @@ namespace DialogAddin
                 var rangeStart = line2RangeStart[err.Line-1] + err.CharPosition ;
 
                 object message = err.Message;
-                var comment = ActiveDocument.Comments.Add(ActiveDocument.Range(rangeStart, rangeStart + 1), ref message);
+                var comment = doc.Comments.Add(doc.Range(rangeStart, rangeStart + 1), ref message);
                 comment.Author = SYSTEM_NAME;
                 comment.ShowTip = true;
 
@@ -214,10 +218,13 @@ namespace DialogAddin
 
             if (result.ParserErrors.AnyErrors == false)
             {
-                var v = new RulesVisitor();
-                var rules = v.VisitProg(result.ProgramContext);
+                var toJson = new ProgramToJson();
+                var json = toJson.Visit(result.ProgramContext);
+                return json;
+                //var v = new RulesVisitor();
+                //var rules = v.VisitProg(result.ProgramContext);
             }
-
+            return null;
            
 
             //var treeVisitor = new WordLangStringVisitor();
@@ -227,20 +234,20 @@ namespace DialogAddin
 
 
 
-        public void SaveAsJson(Word.Document doc=null, string filePath=null)
-        {
-            var scanned = Scan(doc);
-            var jsonModels = scanned.ToJsonRules();
-            var json = JsonConvert.SerializeObject(jsonModels, Formatting.Indented);
+        //public void SaveAsJson(Word.Document doc=null, string filePath=null)
+        //{
+        //    var scanned = Scan(doc);
+        //    var jsonModels = scanned.ToJsonRules();
+        //    var json = JsonConvert.SerializeObject(jsonModels, Formatting.Indented);
 
-            if (filePath == null)
-            {
-                filePath = doc.FullName.Replace(".docx", ".json");
-            }
+        //    if (filePath == null)
+        //    {
+        //        filePath = doc.FullName.Replace(".docx", ".json");
+        //    }
 
-            File.WriteAllText(filePath, json);
+        //    File.WriteAllText(filePath, json);
 
-        }
+        //}
 
         public void EraseComments(Word.Document doc = null)
         {

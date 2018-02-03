@@ -77,26 +77,30 @@ namespace DialogAddin
             saveDialog.RestoreDirectory = true;
             saveDialog.AddExtension = true;
 
-            var result = saveDialog.ShowDialog();
-            if (result == DialogResult.OK)
+            var json = _srvc.ScanForJson(_srvc.ActiveDocument);
+            if (json != null)
             {
-                _srvc.SaveAsJson(_srvc.ActiveDocument, saveDialog.FileName);
-                //File.WriteAllText(saveDialog.FileName, json);
+                var result = saveDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    File.WriteAllText(saveDialog.FileName, json);
+                    //_srvc.SaveAsJson(_srvc.ActiveDocument, saveDialog.FileName);
+                    //File.WriteAllText(saveDialog.FileName, json);
+                }
+
+            } else
+            {
+                MessageBox.Show("There were validation errors. :(");
             }
              
         }
 
         public void OnValidate(Office.IRibbonControl ribbon)
         {
-            _srvc.EraseComments();
-            _srvc.Validate();
+            
+            _srvc.ScanForJson();
         }
-
-        public void OnAntlrTest(Office.IRibbonControl ribbon)
-        {
-            _srvc.EraseComments();
-            _srvc.ScanAndValidate();
-        }
+        
 
         #endregion
 

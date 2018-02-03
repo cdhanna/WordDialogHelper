@@ -19,15 +19,15 @@ rule
 	;
 
 ruleTitle
-	: expr NEWLINE
+	: text NEWLINE
 	;
 
 displayAs
-	: DISPLAYAS NEWLINE expr NEWLINE
+	: DISPLAYAS (NEWLINE text)? NEWLINE
 	;
 
 conditions	
-	: CONDITIONS NEWLINE singleCondition*
+	: CONDITIONS NEWLINE (booleanExpr NEWLINE)*
 	;
 
 dialogs
@@ -35,88 +35,93 @@ dialogs
 	;
 
 outcomes
-	: OUTCOMES NEWLINE singleOutcome*
+	: OUTCOMES NEWLINE (singleOutcome|NEWLINE)* NEWLINE?
 	;
 
 singleOutcome
-	: expr NEWLINE
+	: text
 	;
 
 dialogLine
-	: dialogLineSpeaker NEWLINE dialogLineText* NEWLINE
+	: COLON text NEWLINE multilineText NEWLINE
 	;
 
 dialogLineSpeaker
 	: COLON NAME
 	;
 
-dialogLineText
-	: (NAME WHITESPACE? NEWLINE?)+ 
-	;
-
 singleCondition
-	: comparison NEWLINE
+	: booleanExpr NEWLINE
 	;
 
-comparison
-	: expr (comparisonOp WHITESPACE expr)
-	//: expr (expr SPACE?)? ( comparisonOp  expr*)
+booleanExpr
+	: text (booleanOp WHITESPACE? text)
 	;
 
-comparisonOp
-	: EQUALTO
+booleanOp
+	: booleanOpMain NEGATION | NEGATION booleanOpMain | booleanOpMain
+	; 
+
+booleanOpMain
+	: EQUALTO | GREATERTHAN | LESSTHAN
 	;
 
-expr: (NAME WHITESPACE?)+;
+text
+	: (WHITESPACE? NAME WHITESPACE?)+
+	;
+multilineText
+	: (NAME | WHITESPACE | NEWLINE | EQUALTO | NEGATION)*
+	;
 
-	//;
-// prompt sender IS ana
 /*
  * Lexer Rules
  */
 
-
-
 COLON : ':';
+DISPLAYAS	: D I S P L A Y   A S   SPACE*;
+CONDITIONS	: C O N D I T I O N S   SPACE*; 
+DIALOGS		: D I A L O G S         SPACE*;
+OUTCOMES	: O U T C O M E S       SPACE*;
+WHITESPACE          
+	: (' '|'\t')+ ;
 
-DISPLAYAS	: D I S P L A Y   A S SPACE*;
-CONDITIONS	: C O N D I T I O N S SPACE*; 
-DIALOGS		: D I A L O G S       SPACE*;
-OUTCOMES	: O U T C O M E S     SPACE*;
+GREATERTHAN
+	: '>';
+LESSTHAN
+	: '<';
 
-WHITESPACE          : (' '|'\t')+ ;
-
-
-EQUALTO		: 'is'|'=';
+NEGATION
+	: WHITESPACE? ((N O T)|'!') WHITESPACE?;
+EQUALTO
+	: WHITESPACE? ((I S)|'=') WHITESPACE?;
 
 NAME
-	: [a-zA-Z_] [a-zA-Z0-9_]*
-	;
-
-SPACE		: ' ';
-LOWERCASE  : [a-z] ;
-UPPERCASE  : [A-Z] ;
+	: [a-zA-Z_] [a-zA-Z0-9_]*;
 
 
-//TEXT 
-//	: (LOWERCASE | UPPERCASE | SPACE)+ 
-//	;
+SPACE
+	: ' ';
+LOWERCASE 
+	: [a-z];
+UPPERCASE 
+	: [A-Z];
 
-NEWLINE             : ('\r'? '\n' | '\r')+ ; 
-D : ('D'|'d');
-I : ('I'|'i');
-S : ('S'|'s');
-P : ('P'|'p');
-L : ('L'|'l');
-A : ('A'|'a');
-Y : ('Y'|'y');
+NEWLINE	
+	: WHITESPACE* ('\r'? '\n' | '\r')+ ( ('\r'? '\n' | '\r')+ | WHITESPACE)*;
 
-C : ('C'|'c');
-O : ('O'|'o');
-N : ('N'|'n');
-T : ('T'|'t');
+fragment A : ('A'|'a');
+fragment C : ('C'|'c');
+fragment D : ('D'|'d');
+fragment E : ('E'|'e');
+fragment G : ('G'|'g');
+fragment I : ('I'|'i');
+fragment L : ('L'|'l');
+fragment M : ('M'|'m');
+fragment N : ('N'|'n');
+fragment O : ('O'|'o');
+fragment P : ('P'|'p');
+fragment S : ('S'|'s');
+fragment T : ('T'|'t');
+fragment U : ('U'|'u');
+fragment Y : ('Y'|'y');
 
-G : ('G'|'g');
-U : ('U'|'u');
-M : ('M'|'m');
-E : ('E'|'e');

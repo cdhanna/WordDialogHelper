@@ -30,7 +30,7 @@ namespace DialogAddin
 
         private void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
         {
-            _srvc.SaveAsJson(Doc);
+            //_srvc.SaveAsJson(Doc);
             
             //throw new NotImplementedException();
         }
