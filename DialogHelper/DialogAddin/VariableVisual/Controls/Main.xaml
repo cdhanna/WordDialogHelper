@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="DialogAddin.VariableVisual.Controls.Main"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Background="#FFE6E6E6">
+    <Grid>
+        <TabControl Background="{x:Null}" BorderBrush="{x:Null}">
+            <TabItem Header="Variables" BorderBrush="{x:Null}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition MaxHeight="80"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" VerticalAlignment="Top">
+                        <Label Content="Loaded Definition File:"></Label>
+                        <Label Name="LoadedFile" Content="None"></Label>
+                        <Button Content="Pick Variable Definition File" Click="Button_Click"></Button>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Variables}" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"> 
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="TYPE" Binding="{Binding Type}">
+                                
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="FULL NAME" Binding="{Binding FullName}" Width="*">
+                                
+                            </DataGridTextColumn>
+                            
+                        </DataGrid.Columns>
+                        
+                        
+                    </DataGrid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid/>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>

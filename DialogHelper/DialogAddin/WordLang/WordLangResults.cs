@@ -14,12 +14,16 @@ namespace DialogAddin.WordLang
         public LexerErrorListener LexerErrors { get; set; } = new LexerErrorListener();
 
         public WordLangParser.ProgContext ProgramContext { get; set; }
-
+        public IList<IToken> Tokens { get; private set; }
         public WordLangResults(string src)
         {
             var inputStream = new AntlrInputStream(src);
             var lexer = new WordLangLexer(inputStream);
             lexer.AddErrorListener(LexerErrors);
+
+            var tokenInputStream = new AntlrInputStream(src);
+            var lexerForTokens = new WordLangLexer(tokenInputStream);
+            Tokens = lexerForTokens.GetAllTokens();
 
             var tokenStream = new CommonTokenStream(lexer);
 

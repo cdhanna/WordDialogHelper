@@ -51,6 +51,8 @@
     <Compile Include="Validation\ValidationErrorType.cs" />
     <Compile Include="Validation\ValidationResults.cs" />
     <Compile Include="Validation\Validator.cs" />
+    <Compile Include="Variable.cs" />
+    <Compile Include="VariableCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

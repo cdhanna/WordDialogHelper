@@ -31,11 +31,13 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.1</ApplicationVersion>
+    <ApplicationVersion>1.0.0.5</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -46,8 +48,6 @@
     <FriendlyName>DialogAddin</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -139,15 +139,22 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Office.Tools.v4.0.Framework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -193,9 +200,32 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="VariableVisual\Controls\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VariableVisual\Model.cs" />
+    <Compile Include="VariableVisual\VariablePageContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VariableVisual\VariablePageContainer.Designer.cs">
+      <DependentUpon>VariablePageContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WordLang\AST\ComparisonOperator.cs" />
+    <Compile Include="WordLang\AST\Condition.cs" />
+    <Compile Include="WordLang\AST\Dialog.cs" />
+    <Compile Include="WordLang\AST\ErrorChecks\DuplicateRuleTitle.cs" />
+    <Compile Include="WordLang\AST\Outcome.cs" />
+    <Compile Include="WordLang\AST\Rule.cs" />
+    <Compile Include="WordLang\AST\RuleSet.cs" />
+    <Compile Include="WordLang\AST\RuleTitle.cs" />
+    <Compile Include="WordLang\AST\RuleTree.cs" />
+    <Compile Include="WordLang\ProgramToErrors.cs" />
+    <Compile Include="WordLang\ProgramToAST.cs" />
     <Compile Include="WordLang\ProgramToJson.cs" />
     <Compile Include="WordLang\StandardErrorListener.cs" />
+    <Compile Include="WordLang\WordLangCompiler.cs" />
     <Compile Include="WordLang\WordLangExtensions.cs" />
+    <Compile Include="WordLang\WordLangLexerNoCase.cs" />
     <Compile Include="WordLang\WordLangModelVisitor.cs" />
     <Compile Include="WordLang\WordLangResults.cs" />
     <Compile Include="WordLang\ProgramToTree.cs" />
@@ -209,6 +239,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="VariableVisual\VariablePageContainer.resx">
+      <DependentUpon>VariablePageContainer.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="DialogAddin_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -244,6 +277,15 @@
       <Project>{d7eac003-9933-4abb-9361-77e6f3dd9796}</Project>
       <Name>Dialog</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="VariableVisual\Controls\Main.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WordLang\Errors\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

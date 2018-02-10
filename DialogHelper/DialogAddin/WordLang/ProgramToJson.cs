@@ -38,7 +38,8 @@ namespace DialogAddin.WordLang
         }
         public override string VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
         {
-            var action = Quotize(Visit(context.text()));
+            //var action = Quotize(Visit(context.text()));
+            var action = "";
             return $"{{\"action\":{action}}}";
         }
 
@@ -68,8 +69,9 @@ namespace DialogAddin.WordLang
         public override string VisitBooleanExpr([NotNull] WordLangParser.BooleanExprContext context)
         {
             var op = Visit(context.booleanOp());
-            var left = Quotize(Visit(context.text(0)));
-            var right = Quotize(Visit(context.text(1)));
+            //var left = Quotize(Visit(context.text(0)));
+            //var right = Quotize(Visit(context.text(1)));
+            var left = ""; var right = "";
             return $"{{\"op\":{op},\"left\":{left},\"right\":{right}}}";
         }
 

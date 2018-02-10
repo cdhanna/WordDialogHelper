@@ -38,7 +38,8 @@ namespace DialogAddin.WordLang
 
         public override string VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
         {
-            var action =  Visit(context.text());
+            //var action =  Visit(context.text());
+            var action = "";
             return $"(outcome action=[{action}])";
         }
 
@@ -65,8 +66,10 @@ namespace DialogAddin.WordLang
 
         public override string VisitBooleanExpr([NotNull] WordLangParser.BooleanExprContext context)
         {
-            var left = Visit(context.text(0));
-            var right = Visit(context.text(1));
+            //var left = Visit(context.text(0));
+            //var right = Visit(context.text(1));
+            var left = "";
+            var right = "";
             var op = Visit(context.booleanOp());
             return $"(cond op=[{op}] left=[{left}] right=[{right}])";
         }

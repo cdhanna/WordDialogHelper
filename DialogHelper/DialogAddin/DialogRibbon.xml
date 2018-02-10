@@ -17,12 +17,17 @@
           <button id="validate" label="Validate all Rules"
            screentip="Validate" onAction="OnValidate"
            supertip="Checks all rules to make sure they are valid."/>
-          
+
+          <button id="showPane" label="Show Menu"
+           screentip="Show Menu" onAction="OnShowMenu"
+           supertip="Shows the Dialog Helper menu if it isn't already visible"/>
+
         </group>
-        <group id="HelpGroup" label="About">
+        
+        <!--<group id="HelpGroup" label="About">
           <button id="checkVersion" label="Check Version"
                   screentip="Version" onAction="OnCheckVersion"/>
-        </group>
+        </group>-->
       </tab>
     </tabs>
   </ribbon>

@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DialogTests.Parsing
 {
+    using L = WordLangLexer;
     [TestClass]
     public class LexingWordLang
     {
@@ -76,7 +78,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -95,7 +97,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -116,7 +118,7 @@ dialogs
 :plr
 hello world not
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -134,7 +136,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -152,7 +154,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -170,7 +172,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -188,7 +190,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -206,7 +208,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -224,7 +226,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -241,7 +243,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -259,7 +261,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -276,13 +278,135 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
 
+        [TestMethod]
+        public void ValidLiteralBool()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x = true
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(L.TRUE, program.Tokens[14].Type);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
 
+        [TestMethod]
+        public void ValidLiteralString()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x = \'brainz\'
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(L.QUOTE, program.Tokens[14].Type);
+            Assert.AreEqual(L.QUOTE, program.Tokens[16].Type);
+            Assert.AreEqual(L.NAME, program.Tokens[15].Type);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidLiteralStringWithSpace()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x = \' \'
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(L.QUOTE, program.Tokens[14].Type);
+            Assert.AreEqual(L.QUOTE, program.Tokens[16].Type);
+            Assert.AreEqual(L.WHITESPACE, program.Tokens[15].Type);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidLiteralStringWithSpaces()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x = \'I Am Cool\'
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(L.QUOTE, program.Tokens[14].Type);
+            Assert.AreEqual(L.NAME, program.Tokens[15].Type);
+            Assert.AreEqual(L.WHITESPACE, program.Tokens[16].Type);
+            Assert.AreEqual(L.NAME, program.Tokens[17].Type);
+            Assert.AreEqual(L.WHITESPACE, program.Tokens[18].Type);
+            Assert.AreEqual(L.NAME, program.Tokens[19].Type);
+            Assert.AreEqual(L.QUOTE, program.Tokens[20].Type);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidLiteralStringEmpty()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x = \'\'
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(L.QUOTE, program.Tokens[14].Type);
+            Assert.AreEqual(L.QUOTE, program.Tokens[15].Type);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidRefs()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+player.name is enemy.archNemesis
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
 
         [TestMethod]
         public void ValidNegation_Less()
@@ -296,10 +420,322 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+               
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidOutcomeSetter()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+sEt  Egg.NoG To 'peanuts'
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.SET, L.NAME, L.DOT, L.NAME, L.TO, L.QUOTE, L.NAME, L.QUOTE
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidOutcomeSetterBool()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+sEt  Egg.NoG To fAlSE
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.SET, L.NAME, L.DOT, L.NAME, L.TO, L.FALSE
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+        [TestMethod]
+        public void ValidOutcomeModifier()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+ MoDiFY toast.count by 5
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.INTEGER
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+        [TestMethod]
+        public void ValidOutcomeModifierRef()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+ MoDiFY toast.count by player.hunger
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.NAME, L.DOT, L.NAME
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidOutcomeModifierNegative()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+ MoDiFY toast.count by -12
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.MINUS, L.INTEGER
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void ValidOutcomeModifierNegativeRef()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x < y
+dialogs
+:plr
+hello world
+outcomes
+ MoDiFY globalToast.count by -player.toastCount
+";
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            var expectedTokenTypes = new int[]
+            {
+                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DISPLAYAS, L.NEWLINE,
+                L.NAME, L.NEWLINE,
+                L.CONDITIONS, L.NEWLINE,
+                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.DIALOGS, L.NEWLINE,
+                L.COLON, L.NAME, L.NEWLINE,
+                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+                L.OUTCOMES, L.NEWLINE,
+                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.MINUS, L.NAME, L.DOT, L.NAME
+            };
+            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            {
+                var expectedType = expectedTokenTypes[i];
+                var actualType = program.Tokens[i].Type;
+
+                Assert.AreEqual(expectedType, actualType);
+            }
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void TestingTemplate()
+        {
+            var src = @"Rule
+DisplayAs
+brainz
+Conditions
+a is b
+Dialogs
+Outcomes
+set a to b
+";
+
+            var program = new WordLangResults(src);
+
+            var names = L.tokenNames;
+
+            //var expectedTokenTypes = new int[]
+            //{
+            //    L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.DISPLAYAS, L.NEWLINE,
+            //    L.NAME, L.NEWLINE,
+            //    L.CONDITIONS, L.NEWLINE,
+            //    L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.DIALOGS, L.NEWLINE,
+            //    L.COLON, L.NAME, L.NEWLINE,
+            //    L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.OUTCOMES, L.NEWLINE,
+            //    L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.MINUS, L.NAME, L.DOT, L.NAME
+            //};
+            //for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            //{
+            //    var expectedType = expectedTokenTypes[i];
+            //    var actualType = program.Tokens[i].Type;
+
+            //    Assert.AreEqual(expectedType, actualType);
+            //}
+
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
         }
 
         [TestMethod]
@@ -314,7 +750,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -332,7 +768,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -350,7 +786,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -368,7 +804,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -386,7 +822,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -404,7 +840,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit
+set a to b
 ";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
@@ -423,7 +859,7 @@ dialogs
 :plr
 hello world
 outcomes
-doit";
+set a to b";
             var program = new WordLangResults(src);
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
 
@@ -436,7 +872,7 @@ doit";
      displayAs 
    tunafish rep 
 conditions    
-yaday first is not blahblah some more   
+yaday.first is not blahblah some more   
     another line of fun = twice the pain 
 dialogs
 :player1        
@@ -446,8 +882,8 @@ multi line
 :player2
     something meaningful
             outcomes
-    doit
-doit again
+    set a to b
+set a to b again
 ";
             // if thething is theotherthing:
             // muffin is true
@@ -478,8 +914,8 @@ is this what you think a villain is not
 
 
             outcomes
-    doit
-doit again
+    set a to b
+set a to b again
 ";
             // if thething is theotherthing:
             // muffin is true

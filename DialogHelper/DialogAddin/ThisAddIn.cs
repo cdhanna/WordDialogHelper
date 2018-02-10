@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Word = Microsoft.Office.Interop.Word;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Word;
+using DialogAddin.VariableVisual;
 
 namespace DialogAddin
 {
@@ -16,6 +17,10 @@ namespace DialogAddin
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            
+            //var pane = this.CustomTaskPanes.Add(control, "Dialog Helper");
+            //pane.Visible = true;
+
             // attach the save handler
             //wsh = new WordSaveHandler(Application);
             //wsh.AfterAutoSaveEvent += Wsh_AfterAutoSaveEvent;
@@ -43,7 +48,7 @@ namespace DialogAddin
 
         protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new DialogRibbon(_srvc);
+            return new DialogRibbon(this, _srvc);
         }
 
         #region VSTO generated code

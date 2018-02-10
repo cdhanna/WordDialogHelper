@@ -10,6 +10,9 @@ using System.Text;
 using System.Windows.Forms;
 using Office = Microsoft.Office.Core;
 using Word = Microsoft.Office.Interop.Word;
+using System.Deployment;
+using DialogAddin.VariableVisual;
+using Dialog;
 // TODO:  Follow these steps to enable the Ribbon (XML) item:
 
 // 1: Copy the following code block into the ThisAddin, ThisWorkbook, or ThisDocument class.
@@ -36,11 +39,14 @@ namespace DialogAddin
     {
         private Office.IRibbonUI ribbon;
         private DialogService _srvc;
+        private ThisAddIn _addin;
         SaveFileDialog saveDialog = new SaveFileDialog();
 
-        public DialogRibbon(DialogService srvc)
+
+        public DialogRibbon(ThisAddIn addin, DialogService srvc)
         {
             _srvc = srvc;
+            _addin = addin;
         }
 
         #region IRibbonExtensibility Members
@@ -59,6 +65,25 @@ namespace DialogAddin
         {
             this.ribbon = ribbonUI;
             
+        }
+
+        public void onShowMenu(Office.IRibbonControl ribbon)
+        {
+            var currentPane = _addin.CustomTaskPanes.FirstOrDefault(p => p.Window.Equals(_srvc.ActiveDocument.ActiveWindow) && p.Title.Equals(VariablePageContainer.TITLE));
+            if (currentPane == null)
+            {
+                var control = new VariablePageContainer();
+
+                var model = new DialogActionPaneViewModel();
+                model.Variables.Add("int", "player health");
+                model.Variables.Add("int", "player respect");
+                model.Variables.Add("int", "player resources gold");
+                model.Variables.Add("int", "player resources stone");
+                control.SetModel(model);
+
+                currentPane = _addin.CustomTaskPanes.Add(control, VariablePageContainer.TITLE, _srvc.ActiveDocument.ActiveWindow);
+            }
+            currentPane.Visible = true;
         }
 
         public void OnAddRule(Office.IRibbonControl ribbon)

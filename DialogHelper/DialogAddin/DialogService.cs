@@ -64,7 +64,7 @@ namespace DialogAddin
             var bullets = ActiveDocument.Paragraphs.Add(EndOfDocument);
             bullets.set_Style(RuleNormalStyle);
             bullets.Range.ListFormat.ApplyBulletDefault();
-            bullets.Range.InsertBefore("if");
+            bullets.Range.InsertBefore("a is b");
             
             var dialogs = ActiveDocument.Paragraphs.Add(EndOfDocument);
             dialogs.Range.Text = SECTION_DIALOGS;
@@ -78,109 +78,11 @@ namespace DialogAddin
             var outcomeBullets = ActiveDocument.Paragraphs.Add(EndOfDocument);
             outcomeBullets.set_Style(RuleNormalStyle);
             outcomeBullets.Range.ListFormat.ApplyBulletDefault();
-            outcomeBullets.Range.InsertBefore("Exit()");
+            outcomeBullets.Range.InsertBefore("set a to b");
             
 
         }
 
-        public List<ScannedRule> Scan(Word.Document doc=null)
-        {
-            if (doc == null)
-            {
-                doc = ActiveDocument;
-            }
-            var paragraphcs = doc.Paragraphs;
-            var iterator = paragraphcs.GetEnumerator();
-
-            //var allText = doc.Range().Text;
-            //var result = new WordLangResults(allText);
-            //var treeVisitor = new WordLangStringVisitor();
-            //var treeText = treeVisitor.Visit(result.ProgramContext);
-
-
-            var state = ScanState.IGNORE;
-            var allRules = new List<ScannedRule>();
-            ScannedRule buildingRule = null;
-            ScannedRuleSection buildingSection = null;
-
-            while (iterator.MoveNext())
-            {
-                var current = iterator.Current as Word.Paragraph;
-                var bundle = GetBundle(current);
-
-                var handleRule = new Action(() =>
-               {
-                    if (bundle.IsHeader)
-                   {
-                       if (buildingRule != null)
-                       {
-                           if (buildingSection != null)
-                           {
-                               buildingRule.Sections.Add(buildingSection);
-                           }
-                           allRules.Add(buildingRule);
-                       }
-                       buildingRule = new ScannedRule();
-                       buildingRule.Name = bundle.Text.RemoveWordNewLines();
-                       buildingRule.Start = current.Range.Start;
-                       state = ScanState.RULE;
-                   }
-               });
-
-                var handleSection = new Action(() =>
-                {
-                    if (bundle.IsSection)
-                    {
-                        if (buildingSection != null && buildingRule != null)
-                        {
-                            buildingRule.Sections.Add(buildingSection);
-                        }
-                        buildingSection = new ScannedRuleSection();
-                        buildingSection.Name = bundle.Text.RemoveWordNewLines();
-                        buildingSection.Start = current.Range.Start;
-                        state = ScanState.SECTION;
-                    }
-                });
-
-                switch (state)
-                {
-                    case ScanState.SECTION:
-
-                        if (!bundle.IsSection && !bundle.IsHeader)
-                        {
-                            if (buildingSection != null)
-                            {
-                                buildingSection.Content += bundle.Text;
-                                
-
-                            }
-                        }
-                        handleSection();
-                        handleRule();
-                      
-                        break;
-                    case ScanState.RULE:
-                        handleSection();
-                        break;
-                    default:
-                        handleRule();
-                        break;
-                }
-
-            }
-            if (buildingRule != null)
-            {
-                if (buildingSection != null)
-                {
-                    buildingRule.Sections.Add(buildingSection);
-                }
-                allRules.Add(buildingRule);
-            }
-
-            allRules.ForEach(r => r.Document = doc);
-
-            return allRules;
-        }
 
         public string ScanForJson(Word.Document doc=null)
         {
@@ -189,7 +91,10 @@ namespace DialogAddin
             EraseComments(doc);
 
             var allText = doc.Range().Text;
-            var result = new WordLangResults(allText);
+            var compiler = new WordLangCompiler();
+            var compilerResults = compiler.Compile(allText);
+
+            //var result = new WordLangResults(allText);
 
             
 
@@ -204,23 +109,27 @@ namespace DialogAddin
                 }
             }
 
-            result.ParserErrors.Errors.ForEach(err =>
+            compilerResults.Errors.ForEach(err =>
             {
                 //allLines[err.Line]
                 var rangeStart = line2RangeStart[err.Line-1] + err.CharPosition ;
+                var rangeEnd = line2RangeStart[err.EndLine - 1] + err.EndCharPosition + 1;
+
+                rangeEnd = Math.Min(rangeEnd, doc.Range().End - 1);
+                rangeStart = Math.Min(rangeStart, rangeEnd);
+
+
 
                 object message = err.Message;
-                var comment = doc.Comments.Add(doc.Range(rangeStart, rangeStart + 1), ref message);
+                var comment = doc.Comments.Add(doc.Range(rangeStart, rangeEnd), ref message);
                 comment.Author = SYSTEM_NAME;
                 comment.ShowTip = true;
 
             });
 
-            if (result.ParserErrors.AnyErrors == false)
+            if (compilerResults.Errors.Count == 0)
             {
-                var toJson = new ProgramToJson();
-                var json = toJson.Visit(result.ProgramContext);
-                return json;
+                return compilerResults.JSON;
                 //var v = new RulesVisitor();
                 //var rules = v.VisitProg(result.ProgramContext);
             }
@@ -268,97 +177,7 @@ namespace DialogAddin
 
         }
 
-        public void Validate(List<ScannedRule> rules=null)
-        {
-            if (rules == null)
-            {
-                rules = Scan();
-            }
-
-            var jsonRules = rules.ToJsonRules();
-            var id2ScanRule = rules.ToDictionary(rule => rule.Id);
-            var id2JsonRule = jsonRules.ToDictionary(rule => rule.Id);
-
-            var validator = new RuleValidator();
-            var result = validator.ValidateRules(jsonRules);
-
-            AddValidationComments(id2ScanRule, id2JsonRule, result.NameErrors, "");
-            AddValidationComments(id2ScanRule, id2JsonRule, result.DialogErrors, SECTION_DIALOGS);
-            AddValidationComments(id2ScanRule, id2JsonRule, result.DisplayAsErrors, SECTION_DISPLAYAS);
-
-        }
-
-        private void AddValidationComments(Dictionary<Guid, ScannedRule> id2ScanRule, Dictionary<Guid, JsonRule> id2JsonRule, List<ValidationError> errors, string sectionTitle)
-        {
-            var noSection = new ScannedRuleSection()
-            {
-                Content = "",
-                Name = "",
-                Start = 0
-            };
-
-            foreach (var error in errors)
-            {
-                var scanRule = id2ScanRule[error.RuleId];
-                var jsonRule = id2JsonRule[error.RuleId];
-                var scanSection = scanRule.Sections.FirstOrDefault(s => s.Name.Equals(sectionTitle));
-                if (scanSection == null)
-                {
-                    scanSection = noSection;
-                }
-
-
-                var rangeStart = scanSection.Start + error.Offset;
-
-                if (error.Offset < 0)
-                {
-                    rangeStart = scanSection.Start + Math.Abs(error.Offset);
-                } else
-                {
-                    rangeStart = scanSection.Start + error.Offset + sectionTitle.Length; // add one for the new line
-                }
-                //rangeStart += 1;
-
-                var rangeEnd = rangeStart + error.Length;
-                var errorRange = scanRule.Document.Range(rangeStart, rangeEnd);
-
-                //var x = new wordLangVisitor
-
-                object message = error.Message;
-                var comment = scanRule.Document.Comments.Add(errorRange, ref message);
-                comment.Author = SYSTEM_NAME;
-                comment.ShowTip = true;
-            }
-        }
-
-        private Bundle GetBundle(Word.Paragraph p)
-        {
-            var text = p.Range.Text;
-            var style = p.Range.get_Style();
-
-            var isHeader = style.NameLocal == RuleHeadingStyle.NameLocal;
-            var isNormal = style.NameLocal == RuleNormalStyle.NameLocal;
-            var isSubSection = style.NameLocal == RuleSectionStyle.NameLocal;
-
-            return new Bundle()
-            {
-                Text = text,
-                IsHeader = isHeader,
-                IsNormal = isNormal,
-                IsSection = isSubSection
-            };
-        }
-
-        struct Bundle
-        {
-            public string Text;
-            public bool IsHeader, IsNormal, IsSection;
-        }
-
-        enum ScanState {
-            IGNORE,
-            RULE,
-            SECTION
-        }
+       
+       
     }
 }

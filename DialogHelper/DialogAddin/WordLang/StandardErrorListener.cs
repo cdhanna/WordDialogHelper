@@ -15,12 +15,14 @@ namespace DialogAddin.WordLang
 
         public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
         {
-            
+           
             Errors.Add(new GeneralError()
             {
                 Line = line,
                 CharPosition = charPositionInLine,
-                Message = msg
+                EndLine = line,
+                EndCharPosition = charPositionInLine,
+                Message = msg 
             });
         }
     }
@@ -38,6 +40,8 @@ namespace DialogAddin.WordLang
             {
                 Line = line,
                 CharPosition = charPositionInLine,
+                EndLine = line,
+                EndCharPosition = charPositionInLine,
                 Message = msg
             });
         }
@@ -47,7 +51,22 @@ namespace DialogAddin.WordLang
     {
         public int Line;
         public int CharPosition;
+        public int EndLine;
+        public int EndCharPosition;
         public string Message;
+
+        public static GeneralError New(int start, int end, string message)
+        {
+            return new GeneralError()
+            {
+                Line = 1,
+                EndLine = 1,
+                CharPosition = start,
+                EndCharPosition = end, 
+                Message = message
+            };
+        }
     }
+
 
 }
