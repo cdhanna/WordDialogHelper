@@ -54,8 +54,8 @@ namespace Dialog.Engine
         private object _target;
         private string[] _path;
 
-        public ObjectDialogAttribute(object target, params string[] path)
-            : base(String.Join(".", path))
+        public ObjectDialogAttribute(object target, string baseName, params string[] path)
+            : base(baseName + "." + String.Join(".", path))
         {
             _target = target;
             _path = path;
