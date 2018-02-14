@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AttributeFetch\SimpleAttrTests.cs" />
     <Compile Include="Parsing\LexingWordLang.cs" />
     <Compile Include="Parsing\ToTreeTests.cs" />
     <Compile Include="Parsing\ToASTTests.cs" />

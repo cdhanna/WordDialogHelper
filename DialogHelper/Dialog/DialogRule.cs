@@ -3,11 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dialog
 {
-    public class JsonRule
+    public class DialogRule
     {
         [JsonProperty("guid")]
         public Guid Id { get; set; }
@@ -19,10 +18,10 @@ namespace Dialog
         public string DisplayAs { get; set; }
 
         [JsonProperty("conditions")]
-        public string[] Conditions { get; set; }
+        public DialogCondition[] Conditions { get; set; }
 
         [JsonProperty("outcomes")]
-        public string[] Outcomes { get; set; }
+        public DialogOutcome[] Outcomes { get; set; }
 
         [JsonProperty("dialog")]
         public DialogPart[] Dialog { get; set; }
@@ -37,6 +36,30 @@ namespace Dialog
 
             [JsonProperty("text")]
             public string Content { get; set; }
+        }
+
+        public class DialogCondition
+        {
+            [JsonProperty("left")]
+            public string Left { get; set; }
+
+            [JsonProperty("right")]
+            public string Right { get; set; }
+
+            [JsonProperty("op")]
+            public string Op { get; set; }
+        }
+
+        public class DialogOutcome
+        {
+            [JsonProperty("command")]
+            public string Command { get; set; }
+
+            [JsonProperty("target")]
+            public string Target { get; set; }
+
+            [JsonProperty("argument")]
+            public string Argument { get; set; }
         }
     }
 }

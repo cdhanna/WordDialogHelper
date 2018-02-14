@@ -42,9 +42,36 @@ namespace DialogAddin.WordLang
             } else
             {
                 errs.AddRange(Visit(conditions));
-
             }
- 
+
+            var outcomes = context.outcomes();
+            if (outcomes.ChildCount == 0)
+            {
+                errs.Add(context.NewError("Missing the Outcomes header"));
+            } else
+            {
+                errs.AddRange(Visit(outcomes));
+            }
+
+            return errs;
+        }
+
+        public override List<GeneralError> VisitOutcomes([NotNull] WordLangParser.OutcomesContext context)
+        {
+            var errs = new List<GeneralError>();
+
+            var outcomeCtxs = context.singleOutcome();
+
+            if (outcomeCtxs == null || outcomeCtxs.Count() == 0)
+            {
+                errs.Add(context.NewError("You must have at least one Outcome."));
+            } else
+            {
+                outcomeCtxs.Select(ctx => Visit(ctx))
+                    .ToList()
+                    .ForEach(set => errs.AddRange(set));
+            }
+
 
             return errs;
         }
@@ -56,13 +83,33 @@ namespace DialogAddin.WordLang
 
             if (booleanExprCtxs == null || booleanExprCtxs.Count() == 0)
             {
-                errs.Add(context.NewError("You Must have at least one Condition, in the form of a SET x TO y, or MODIFY a BY b"));
+                errs.Add(context.NewError("You must have at least one Condition."));
             } else
             {
                 booleanExprCtxs.Select(ctx => Visit(ctx))
                     .ToList()
                     .ForEach(set => errs.AddRange(set));
             }
+
+            return errs;
+        }
+
+        public override List<GeneralError> VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
+        {
+            var errs = new List<GeneralError>();
+
+            var modifierErrs = context.outcomeModifier()?.Accept(this);
+            if (modifierErrs != null)
+            {
+                errs.AddRange(modifierErrs);
+            }
+
+            var setterErrs = context.outcomeSetter()?.Accept(this);
+            if (setterErrs != null)
+            {
+                errs.AddRange(setterErrs);
+            }
+
 
             return errs;
         }
