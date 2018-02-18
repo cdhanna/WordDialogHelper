@@ -24,7 +24,7 @@ namespace DialogTests.AttributeFetch
         {
             var dummy = new Dummy();
 
-            var attr = new ObjectDialogAttribute(dummy, "X");
+            var attr = new ObjectDialogAttribute(dummy, "dummy", "X");
 
             attr.Update();
 
@@ -38,13 +38,25 @@ namespace DialogTests.AttributeFetch
         {
             var dc = new DummyCollection();
 
-            var attr = new ObjectDialogAttribute(dc, "d", "y");
+            var attr = new ObjectDialogAttribute(dc, "dummy", "d", "y");
 
             attr.Update();
 
             var output = attr.CurrentValue;
 
             Assert.AreEqual(DialogAttribute.ValueToLong("monkey"), output);
+        }
+
+        [TestMethod]
+        public void StringToLong()
+        {
+            var str = "a";
+            var str2 = "a";
+
+            var code = str.ToLong();
+            var code2 = str2.ToLong();
+
+            Assert.AreEqual(code2, code);
         }
     }
 }

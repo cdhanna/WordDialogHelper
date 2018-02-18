@@ -9,7 +9,7 @@ namespace DialogAddin.WordLang
 {
     public class ProgramToJson : WordLangBaseVisitor<string>
     {
-
+        private ProgramToTree TreeVisitor = new ProgramToTree();
         public override string VisitProg([NotNull] WordLangParser.ProgContext context)
         {
             var rules = context.rule()
@@ -25,8 +25,8 @@ namespace DialogAddin.WordLang
             var displayAs = Visit(context.displayAs());
             var conditions = Visit(context.conditions());
             var dialogs = Visit(context.dialogs());
-            var outcomes = Visit(context.outcomes());
-            return $"{{\"title\":{title},\"displayAs\":{displayAs},\"conditions\":{conditions},\"dialogs\":{dialogs},\"outcomes\":{outcomes}}}";
+            var outcomes = "[]";//Visit(context.outcomes());
+            return $"{{\"name\":{title},\"displayAs\":{displayAs},\"conditions\":{conditions},\"dialog\":{dialogs},\"outcomes\":{outcomes}}}";
         }
 
         public override string VisitOutcomes([NotNull] WordLangParser.OutcomesContext context)
@@ -40,7 +40,8 @@ namespace DialogAddin.WordLang
         {
             //var action = Quotize(Visit(context.text()));
             var action = "";
-            return $"{{\"action\":{action}}}";
+            //return $"{{\"action\":{action}}}";
+            return $"{{}}";
         }
 
         public override string VisitDialogs([NotNull] WordLangParser.DialogsContext context)
@@ -55,7 +56,7 @@ namespace DialogAddin.WordLang
         {
             var speaker = Quotize(Visit(context.text()));
             var line = Quotize(Visit(context.multilineText()));
-            return $"{{\"speaker\":{speaker},\"line\":{line}}}";
+            return $"{{\"speaker\":{speaker},\"content\":{line}}}";
         }
 
         public override string VisitConditions([NotNull] WordLangParser.ConditionsContext context)
@@ -69,9 +70,11 @@ namespace DialogAddin.WordLang
         public override string VisitBooleanExpr([NotNull] WordLangParser.BooleanExprContext context)
         {
             var op = Visit(context.booleanOp());
+           
+            var left = Quotize(TreeVisitor.Visit(context.expression(0)));
+            var right = Quotize(TreeVisitor.Visit(context.expression(1)));
             //var left = Quotize(Visit(context.text(0)));
             //var right = Quotize(Visit(context.text(1)));
-            var left = ""; var right = "";
             return $"{{\"op\":{op},\"left\":{left},\"right\":{right}}}";
         }
 

@@ -8,8 +8,8 @@ namespace Dialog
 {
     public class DialogRule
     {
-        [JsonProperty("guid")]
-        public Guid Id { get; set; }
+        //[JsonProperty("guid")]
+        //public Guid Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -20,34 +20,34 @@ namespace Dialog
         [JsonProperty("conditions")]
         public DialogCondition[] Conditions { get; set; }
 
-        [JsonProperty("outcomes")]
-        public DialogOutcome[] Outcomes { get; set; }
-
         [JsonProperty("dialog")]
         public DialogPart[] Dialog { get; set; }
 
+        [JsonProperty("outcomes")]
+        public DialogOutcome[] Outcomes { get; set; }
+
         public class DialogPart
         {
-            [JsonProperty("guid")]
-            public Guid Id { get; set; }
+            //[JsonProperty("guid")]
+            //public Guid Id { get; set; }
 
             [JsonProperty("speaker")]
             public string Speaker { get; set; }
 
-            [JsonProperty("text")]
+            [JsonProperty("content")]
             public string Content { get; set; }
         }
 
         public class DialogCondition
         {
+            [JsonProperty("op")]
+            public string Op { get; set; }
             [JsonProperty("left")]
             public string Left { get; set; }
 
             [JsonProperty("right")]
             public string Right { get; set; }
 
-            [JsonProperty("op")]
-            public string Op { get; set; }
         }
 
         public class DialogOutcome

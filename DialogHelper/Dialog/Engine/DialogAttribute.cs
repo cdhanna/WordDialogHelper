@@ -35,17 +35,26 @@ namespace Dialog.Engine
 
             if (obj is string)
             {
-                return obj.GetHashCode() ;
+                return ((string)obj).ToLong();
             }
 
             if (obj is bool)
             {
-                return obj.GetHashCode();
+                return obj.Equals(true) ? 1 : 0;
             }
 
             throw new InvalidOperationException("Unknown type");
         }
 
+    }
+
+    public static class TypeExtensions
+    {
+        public static long ToLong(this string str)
+        {
+            return str.GetHashCode();
+            
+        }
     }
 
     public class ObjectDialogAttribute : DialogAttribute

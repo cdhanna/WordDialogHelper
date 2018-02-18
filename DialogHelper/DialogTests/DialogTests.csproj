@@ -39,6 +39,10 @@
       <HintPath>..\packages\Antlr4.Runtime.4.6.5-beta001\lib\net45\Antlr4.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DialogAddin\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -54,9 +58,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AttributeFetch\MathTests.cs" />
     <Compile Include="AttributeFetch\SimpleAttrTests.cs" />
     <Compile Include="AttributeFetch\BasicEngine.cs" />
+    <Compile Include="Parsing\LexingMath.cs" />
     <Compile Include="Parsing\LexingWordLang.cs" />
+    <Compile Include="Parsing\ToDialog.cs" />
     <Compile Include="Parsing\ToTreeTests.cs" />
     <Compile Include="Parsing\ToASTTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

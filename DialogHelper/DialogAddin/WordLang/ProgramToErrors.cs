@@ -128,13 +128,66 @@ namespace DialogAddin.WordLang
         {
             var errs = new List<GeneralError>();
 
-            var refCtx = context.referance();
+            errs.AddRange(Visit(context.additiveExpr()));
 
-            if (refCtx != null)
-            {
-                errs.AddRange(Visit(refCtx));
-            }
+            //context.term
+
+            //var refCtx = context.referance();
+
+            //if (refCtx != null)
+            //{
+            //    errs.AddRange(Visit(refCtx));
+            //}
            
+            return errs;
+        }
+
+        public override List<GeneralError> VisitAdditiveExpr([NotNull] WordLangParser.AdditiveExprContext context)
+        {
+            var errs = new List<GeneralError>();
+
+            errs.AddRange(Visit(context.multiplicitiveExpr()));
+            if (context.additiveExpr() != null)
+            {
+                errs.AddRange(Visit(context.additiveExpr()));
+            }
+
+            return errs;
+        }
+
+        public override List<GeneralError> VisitMultiplicitiveExpr([NotNull] WordLangParser.MultiplicitiveExprContext context)
+        {
+            var errs = new List<GeneralError>();
+            errs.AddRange(Visit(context.parenableExpr()));
+            if (context.multiplicitiveExpr() != null)
+            {
+                errs.AddRange(Visit(context.multiplicitiveExpr()));
+            }
+            return errs;
+        }
+
+        public override List<GeneralError> VisitParenableExpr([NotNull] WordLangParser.ParenableExprContext context)
+        {
+            var errs = new List<GeneralError>();
+
+            if (context.term() != null)
+            {
+                errs.AddRange(Visit(context.term()));
+            } else
+            {
+                errs.AddRange(Visit(context.expression()));
+            }
+
+            return errs;
+        }
+
+        public override List<GeneralError> VisitTerm([NotNull] WordLangParser.TermContext context)
+        {
+            var errs = new List<GeneralError>();
+            if (context.referance() != null)
+            {
+                errs.AddRange(Visit(context.referance()));
+            }
             return errs;
         }
 

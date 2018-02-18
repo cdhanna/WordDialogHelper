@@ -64,8 +64,30 @@ namespace Dialog.Engine
                 {
                     var condition = rule.Conditions[j];
 
-                    var leftValue = attrNameToValue[condition.Left.ToLower()]; // assume that the attribute exists, I guess.
-                    var rightValue = attrNameToValue[condition.Right.ToLower()];
+
+                    /*
+                     * the Left and Right will always be expressions.
+                     * 
+                     * At the moment, an expression is 
+                         * expr: literal | reference
+                         * literal: NUMBER | STRING | TRUE | FALSE
+                         * reference: NAME | NAME SEPARATOR reference
+                     * 
+                     * So we can write a cheap parser to handle that, with these hacky rules...
+                     * 1. if the first character is 0-9, its a literal NUMBER
+                     * 2. if the first character is a " or ', its a literal STRING
+                     * 3. if the expr is false or true, its a literal BOOL
+                     * 4. otherwise, its a reference
+                     * 
+                     */
+
+                    //var leftValue = HackyParse(condition.Left.ToLower(), attrNameToValue);
+                    //var rightValue = HackyParse(condition.Right.ToLower(), attrNameToValue);
+                    var leftValue = condition.Left.ToLower().ProcessAsPrefixMath(attrNameToValue);
+                    var rightValue = condition.Right.ToLower().ProcessAsPrefixMath(attrNameToValue);
+
+                    //var leftValue = attrNameToValue[condition.Left.ToLower()]; // assume that the attribute exists, I guess.
+                    //var rightValue = attrNameToValue[condition.Right.ToLower()];
                     var matched = false;
                     switch (condition.Op) // TODO add negation support
                     {
@@ -91,6 +113,40 @@ namespace Dialog.Engine
 
             }
             return validRules;
+        }
+
+        private long HackyParse(string expr, Dictionary<string, long> attrNameToValue)
+        {
+            
+            if (expr.Length > 0 &&
+                (expr[0].Equals("\"")
+                || expr[0].Equals("'")))
+            {
+                // strip quotes
+                return expr.Substring(1, expr.Length - 2).ToLong();
+            }
+            else if (expr.Length > 0 &&
+              (expr[0].Equals('0')
+              || expr[0].Equals('1')
+              || expr[0].Equals('2')
+              || expr[0].Equals('3')
+              || expr[0].Equals('4')
+              || expr[0].Equals('5')
+              || expr[0].Equals('6')
+              || expr[0].Equals('7')
+              || expr[0].Equals('8')
+              || expr[0].Equals('9')
+              ))
+            {
+                return long.Parse(expr);
+            }
+            else if (expr.Equals("false") || expr.Equals("true"))
+            {
+                return (expr.Equals("false") ? 0 : 1);
+            } else
+            {
+                return attrNameToValue[expr];
+            }
         }
 
         private DialogRule GetBestRule(List<DialogRule> rules)

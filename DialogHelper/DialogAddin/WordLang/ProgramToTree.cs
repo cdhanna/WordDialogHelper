@@ -66,12 +66,112 @@ namespace DialogAddin.WordLang
 
         public override string VisitBooleanExpr([NotNull] WordLangParser.BooleanExprContext context)
         {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
             //var left = Visit(context.text(0));
             //var right = Visit(context.text(1));
-            var left = "";
-            var right = "";
             var op = Visit(context.booleanOp());
             return $"(cond op=[{op}] left=[{left}] right=[{right}])";
+        }
+
+        public override string VisitExpression([NotNull] WordLangParser.ExpressionContext context)
+        {
+            
+            //if (context.multiplicitiveExpr() != null)
+            //{
+            //    return Visit(context.multiplicitiveExpr());
+            //} else
+            //{
+            //}
+
+                return Visit(context.additiveExpr());
+
+        }
+
+        public override string VisitAdditiveExpr([NotNull] WordLangParser.AdditiveExprContext context)
+        {
+           
+            var leftText = context.multiplicitiveExpr().GetText();
+            var left = Visit(context.multiplicitiveExpr());
+
+            if (context.additiveExpr() != null)
+            {
+                var rightText = context.additiveExpr().GetText();
+                var right = Visit(context.additiveExpr());
+
+                var op = Visit(context.additiveOp());
+
+                return $"({op} {left} {right})";
+            } else
+            {
+                return $"{left}";
+            }
+
+
+        }
+
+        public override string VisitAdditiveOp([NotNull] WordLangParser.AdditiveOpContext context)
+        {
+            if (context.PLUS() != null)
+            {
+                return "+";
+            }
+            else
+            {
+                return "-";
+            }
+        }
+
+        public override string VisitMultiplicitiveOp([NotNull] WordLangParser.MultiplicitiveOpContext context)
+        {
+            if (context.MULTIPLY() != null)
+            {
+                return "*";
+            } else
+            {
+                return "/";
+            }
+        }
+
+        public override string VisitMultiplicitiveExpr([NotNull] WordLangParser.MultiplicitiveExprContext context)
+        {
+            //if (context.expression() != null)
+            //{
+            //    return $"{Visit(context.expression())}";
+            //}
+
+            var leftText = context.parenableExpr().GetText();
+            var left = Visit(context.parenableExpr());
+
+            if (context.multiplicitiveExpr() != null)
+            {
+                var rightText = context.multiplicitiveExpr().GetText();
+                var right = Visit(context.multiplicitiveExpr());
+                var op = Visit(context.multiplicitiveOp());
+                return $"({op} {left} {right})";
+            }
+            else
+            {
+                return $"{left}";
+            }
+
+
+        }
+
+        public override string VisitParenableExpr([NotNull] WordLangParser.ParenableExprContext context)
+        {
+            if (context.term() != null)
+            {
+                return Visit(context.term());
+            } else
+            {
+                return Visit(context.expression());
+            }
+        }
+
+        public override string VisitTerm([NotNull] WordLangParser.TermContext context)
+        {
+            return context.GetText();
         }
 
         public override string VisitBooleanOp([NotNull] WordLangParser.BooleanOpContext context)
@@ -113,7 +213,13 @@ namespace DialogAddin.WordLang
 
         public override string VisitDisplayAs([NotNull] WordLangParser.DisplayAsContext context)
         {
-            return Visit(context.text());
+            if (context.text() != null)
+            {
+                return Visit(context.text());
+            } else
+            {
+                return "";
+            }
         }
 
         public override string VisitRuleTitle([NotNull] WordLangParser.RuleTitleContext context)

@@ -72,8 +72,38 @@ booleanOpMain
 
 
 expression
-	: WHITESPACE? (referance | literal) WHITESPACE?
+	: 
+	| additiveExpr
 	;
+
+additiveExpr
+	: 
+	| (multiplicitiveExpr)
+	| (multiplicitiveExpr additiveOp additiveExpr)
+	;
+additiveOp
+	: MINUS | PLUS
+	;
+
+multiplicitiveExpr
+	:
+	| (parenableExpr)
+	| (parenableExpr multiplicitiveOp multiplicitiveExpr)
+	;
+multiplicitiveOp
+	: MULTIPLY | DIVIDE
+	;
+
+parenableExpr
+	:
+	| (WHITESPACE? term WHITESPACE?)
+	| (LEFT_PAREN expression RIGHT_PAREN)
+	;
+
+term
+	: (referance | literal)
+	;
+	//x * y + z * w * a + 1
 
 numberExpression
 	: WHITESPACE? (PLUS|MINUS)?(referance | numLiteral) WHITESPACE?
@@ -127,6 +157,8 @@ reservedWord
 	| BY
 	| MINUS
 	| PLUS
+	| MULTIPLY
+	| DIVIDE
 	;
 
 /*
@@ -146,6 +178,7 @@ GREATERTHAN
 LESSTHAN
 	: '<';
 
+
 BY
 	: WHITESPACE? (B Y) WHITESPACE?;
 MODIFY
@@ -164,8 +197,16 @@ MINUS
 	: WHITESPACE? '-' WHITESPACE?;
 PLUS
 	: WHITESPACE? '+' WHITESPACE?;
+MULTIPLY
+	: WHITESPACE? '*' WHITESPACE?;
+DIVIDE
+	: WHITESPACE? '/' WHITESPACE?;
 EQUALTO
 	: WHITESPACE? ((I S)|'=') WHITESPACE?;
+LEFT_PAREN
+	: WHITESPACE? '(' WHITESPACE?;
+RIGHT_PAREN
+	: WHITESPACE? ')' WHITESPACE?;
 
 INTEGER
 	: [1-9] [0-9]*;
