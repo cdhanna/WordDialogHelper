@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Dialog</title>
+    <authors>Chris Hanna</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Dialog Engine</description>
+   <copyright>Copyright 2018</copyright>
+    <tags></tags>
+  </metadata>
+</package>
