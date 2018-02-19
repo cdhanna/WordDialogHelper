@@ -1,5 +1,6 @@
 ﻿using Dialog;
 using DialogAddin.Models;
+using DialogAddin.VariableVisual;
 using DialogAddin.WordLang;
 using Newtonsoft.Json;
 using System;
@@ -30,6 +31,8 @@ namespace DialogAddin
         public Word.Style RuleNormalStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleNormal]; } }
 
 
+        public DialogActionPaneViewModel Model { get; set; } = new DialogActionPaneViewModel();
+
         public List<Word.Comment> Comments { get; set; } = new List<Word.Comment>();
 
         //public Word.Range NextRange(Word.Range toFinish=null)
@@ -39,6 +42,16 @@ namespace DialogAddin
         //    var nextRange = ActiveDocument.Range(toFinish.End - 1);
         //    return nextRange;
         //}
+
+
+        public DialogService()
+        {
+            Model.Variables.Add("int", "player.health");
+            Model.Variables.Add("int", "player.ammo");
+            Model.Variables.Add("int", "player.respect");
+            Model.Variables.Add("int", "a");
+            Model.Variables.Add("int", "b");
+        }
 
 
 
@@ -91,7 +104,7 @@ namespace DialogAddin
 
             var allText = doc.Range().Text;
             var compiler = new WordLangCompiler();
-            var compilerResults = compiler.Compile(allText);
+            var compilerResults = compiler.Compile(allText, Model.Variables);
 
             //var result = new WordLangResults(allText);
 

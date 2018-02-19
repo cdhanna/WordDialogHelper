@@ -877,7 +877,7 @@ conditions
 yaday.first is not blahblah some more   
     another line of fun = twice the pain 
 dialogs
-:player1        
+:player 1        
 speaking line text
 multi line
 

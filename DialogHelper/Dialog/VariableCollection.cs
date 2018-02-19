@@ -10,6 +10,11 @@ namespace Dialog
     {
         private List<Variable> _variables = new List<Variable>();
 
+        public VariableCollection Clear()
+        {
+            _variables.Clear();
+            return this;
+        }
 
         public VariableCollection Add(string typeName, string fullName)
         {

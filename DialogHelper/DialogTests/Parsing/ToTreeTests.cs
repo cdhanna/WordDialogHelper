@@ -20,7 +20,7 @@ namespace DialogTests.Parsing
      displayAs 
    tunafish rep 
 conditions    
-player.health + 50 > 100
+player health + 50 > 100
 dialogs
 :player1        
 speaking line text

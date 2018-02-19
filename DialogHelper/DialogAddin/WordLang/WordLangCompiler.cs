@@ -21,7 +21,7 @@ namespace DialogAddin.WordLang
             _errorChecks.Add(new DuplicateRuleTitle());
         }
 
-        public WordLangCompilerResults Compile(string src)
+        public WordLangCompilerResults Compile(string src, VariableCollection variabels)
         {
             var results = new WordLangCompilerResults();
 
@@ -38,14 +38,9 @@ namespace DialogAddin.WordLang
             parser.AddErrorListener(parserErrorListener);
 
             var program = parser.prog();
+            
 
-            var varCollection = new VariableCollection();
-            varCollection.Add("int", "player health");
-            varCollection.Add("int", "player respect");
-            varCollection.Add("int", "player resources gold");
-            varCollection.Add("int", "player resources stone");
-
-            var errorVisitor = new ProgramToErrors(varCollection);
+            var errorVisitor = new ProgramToErrors(variabels);
             var detectedErrors = errorVisitor.Visit(program);
 
             var generalErrors = new List<GeneralError>();

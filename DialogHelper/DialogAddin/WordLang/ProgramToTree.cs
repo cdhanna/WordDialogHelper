@@ -171,7 +171,26 @@ namespace DialogAddin.WordLang
 
         public override string VisitTerm([NotNull] WordLangParser.TermContext context)
         {
-            return context.GetText();
+
+            if(context.literal() != null)
+            {
+                return context.literal().GetText();
+            } else
+            {
+                return Visit(context.referance());
+            }
+            
+        }
+
+        public override string VisitReferance([NotNull] WordLangParser.ReferanceContext context)
+        {
+            var part = context.NAME().GetText();
+            if (context.referance() != null)
+            {
+                var rest = Visit(context.referance());
+                return part + "." + rest;
+            }
+            return part;
         }
 
         public override string VisitBooleanOp([NotNull] WordLangParser.BooleanOpContext context)
@@ -229,7 +248,8 @@ namespace DialogAddin.WordLang
 
         public override string VisitText([NotNull] WordLangParser.TextContext context)
         {
-            return context.NAME().CombineTokens();
+            return context.GetText().Trim();
+            //return context.NAME().CombineTokens();
         }
 
         public override string VisitMultilineText([NotNull] WordLangParser.MultilineTextContext context)

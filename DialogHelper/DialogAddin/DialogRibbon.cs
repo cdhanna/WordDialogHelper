@@ -74,12 +74,8 @@ namespace DialogAddin
             {
                 var control = new VariablePageContainer();
 
-                var model = new DialogActionPaneViewModel();
-                model.Variables.Add("int", "player health");
-                model.Variables.Add("int", "player respect");
-                model.Variables.Add("int", "player resources gold");
-                model.Variables.Add("int", "player resources stone");
-                control.SetModel(model);
+                
+                control.SetModel(_srvc.Model);
 
                 currentPane = _addin.CustomTaskPanes.Add(control, VariablePageContainer.TITLE, _srvc.ActiveDocument.ActiveWindow);
             }

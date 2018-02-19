@@ -136,7 +136,7 @@ numLiteral
 	;
 
 text
-	: (WHITESPACE? NAME WHITESPACE?)+
+	: (WHITESPACE? (NAME|INTEGER) WHITESPACE?)+
 	;
 multilineText
 	: (NAME | WHITESPACE | NEWLINE | reservedWord)*
@@ -159,6 +159,7 @@ reservedWord
 	| PLUS
 	| MULTIPLY
 	| DIVIDE
+	| COMMA
 	;
 
 /*
@@ -166,6 +167,7 @@ reservedWord
  */
 
 COLON : ':';
+COMMA: ',';
 DISPLAYAS	: D I S P L A Y   A S   SPACE*;
 CONDITIONS	: C O N D I T I O N S   SPACE*; 
 DIALOGS		: D I A L O G S         SPACE*;

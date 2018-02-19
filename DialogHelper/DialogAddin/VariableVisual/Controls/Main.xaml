@@ -19,7 +19,7 @@
                         <Button Content="Pick Variable Definition File" Click="Button_Click"></Button>
                     </StackPanel>
 
-                    <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Variables}" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"> 
+                    <DataGrid Name="VariableGrid" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Variables}" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"> 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="TYPE" Binding="{Binding Type}">
                                 
