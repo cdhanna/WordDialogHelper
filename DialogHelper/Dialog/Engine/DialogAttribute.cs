@@ -27,7 +27,14 @@ namespace Dialog.Engine
             return 0;
         }
 
-        public virtual void SetRealValue(object value)
+        public void Invoke(object value)
+        {
+            Invoke(new Dictionary<string, object>()
+            {
+                {"", value }
+            });
+        }
+        public virtual void Invoke(Dictionary<string, object> values)
         {
             // 
         }
@@ -83,6 +90,29 @@ namespace Dialog.Engine
         }
     }
 
+    public class ObjectFunctionDialogAttribute : DialogAttribute
+    {
+        private Action<Dictionary<string, object>> _action;
+        private Dictionary<string, object> _defaults;
+        public ObjectFunctionDialogAttribute(string name, Action<Dictionary<string, object>> method, Dictionary<string, object> defaults=null) : base(name)
+        {
+            _action = method;
+            _defaults = defaults;
+        }
+
+        public override void Invoke(Dictionary<string, object> values)
+        {
+            foreach(var kv in _defaults)
+            {
+                if (values.ContainsKey(kv.Key) == false)
+                {
+                    values.Add(kv.Key, kv.Value);
+                }
+            }
+            _action(values);
+        }
+    }
+
     public class ObjectDialogAttribute : DialogAttribute
     {
 
@@ -129,13 +159,13 @@ namespace Dialog.Engine
             return obj;
         }
 
-        public override void SetRealValue(object value)
+        public override void Invoke(Dictionary<string, object> values)
         {
             if (_lastFieldInfo == null)
             {
                 throw new Exception("Attribute Never found matching field for " + Name);
             }
-            _lastFieldInfo.SetValue(_target, value);
+            _lastFieldInfo.SetValue(_target, values[""]);
         }
     }
 }

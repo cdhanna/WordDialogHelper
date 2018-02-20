@@ -43,7 +43,7 @@ namespace Dialog.Engine
             for (var i = 0; i < rule.Outcomes.Length; i++)
             {
                 var outcome = rule.Outcomes[i];
-                var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(outcome.Target));
+                var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(outcome.Target.ToLower()));
                 if (targetAttribute == null)
                 {
                     throw new Exception("Couldnt execute rule, because target attribute couldnt be found. " + outcome.Target);
@@ -54,7 +54,15 @@ namespace Dialog.Engine
                 {
                     case "set":
                         var value = outcome.Arguments[""].ProcessAsPrefixMathTyped(values);
-                        targetAttribute.SetRealValue(value);
+                        targetAttribute.Invoke(value);
+                        break;
+                    case "run":
+                        var outputValues = new Dictionary<string, object>();
+                        foreach (var kv in outcome.Arguments)
+                        {
+                            outputValues.Add(kv.Key, kv.Value.ProcessAsPrefixMathTyped(values));
+                        }
+                        targetAttribute.Invoke(outputValues);
                         break;
                     default:
                         throw new NotImplementedException("Unknown outcome command " + outcome.Command);

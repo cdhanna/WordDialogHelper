@@ -15,6 +15,13 @@ namespace DialogTests.AttributeFetch
             public int Health = 50;
             public int MaxHealth = 50;
             public int Ammo = 15;
+
+            public void SetAll(int health, int max, int ammo)
+            {
+                Health = health;
+                MaxHealth = max;
+                Ammo = ammo;
+            }
         }
 
         [TestMethod]
@@ -246,6 +253,79 @@ namespace DialogTests.AttributeFetch
             engine.ExecuteRuleOutcomes(best);
 
             Assert.AreEqual(50, player.Health);
+
+        }
+
+        [TestMethod]
+        public void SimpleEngineOutcomeRunner()
+        {
+            var player = new Actor();
+            player.MaxHealth = 100;
+            player.Health = 100;
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    },
+                    Outcomes = new DialogRule.DialogOutcome[]
+                    {
+                        new DialogRule.DialogOutcome()
+                        {
+                            Command = "run",
+                            Target = "player.sampleFunc",
+                            Arguments = new Dictionary<string, string>()
+                            {
+                                { "h", "(/ player.maxHealth 2)" },
+                                
+                                { "ammo", "55" }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // new OFDA(player, "setAll", new Dictionary<string, string>(){
+
+            var attributes = new DialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+                new ObjectFunctionDialogAttribute("player.sampleFunc", new Action<Dictionary<string, object>>(vars =>
+                {
+                    var health = (int)vars["h"];
+                    var maxHealth = (int)vars["mx"];
+                    var ammo = (int)vars["ammo"];
+
+                    player.SetAll(health, maxHealth, ammo);
+
+                }), new Dictionary<string, object>{
+                    { "mx", 200 }
+                })
+            };
+
+            var engine = new DialogEngine();
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+
+            engine.ExecuteRuleOutcomes(best);
+
+            Assert.AreEqual(50, player.Health);
+            Assert.AreEqual(200, player.MaxHealth);
+            Assert.AreEqual(55, player.Ammo);
 
         }
     }
