@@ -3,6 +3,7 @@ using Dialog;
 using Dialog.Engine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DialogTests.AttributeFetch
 {
@@ -190,6 +191,62 @@ namespace DialogTests.AttributeFetch
             var best = engine.GetBestValidDialog();
             Assert.IsNotNull(best);
             Assert.AreEqual("I have more than half health", best.Name);
+        }
+
+        [TestMethod]
+        public void SimpleEngineOutcomeSetter()
+        {
+            var player = new Actor();
+            player.MaxHealth = 100;
+            player.Health = 100;
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    },
+                    Outcomes = new DialogRule.DialogOutcome[]
+                    {
+                        new DialogRule.DialogOutcome()
+                        {
+                            Command = "set",
+                            Target = "player.health",
+                            Arguments = new Dictionary<string, string>()
+                            {
+                                { "", "(/ player.maxHealth 2)" }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine();
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+
+            engine.ExecuteRuleOutcomes(best);
+
+            Assert.AreEqual(50, player.Health);
+
         }
     }
 }

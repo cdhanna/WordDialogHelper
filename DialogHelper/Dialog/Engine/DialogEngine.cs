@@ -13,7 +13,7 @@ namespace Dialog.Engine
         public DialogRule GetBestValidDialog()
         {
             
-            var attrNameToValue = GetAttributeValues();
+            var attrNameToValue = GetAttributeValueCodes();
             var validRules = GetValidRules(attrNameToValue);
             var bestRule = GetBestRule(validRules);
             return bestRule;
@@ -21,7 +21,7 @@ namespace Dialog.Engine
 
         public List<DialogRule> GetAllValidDialog()
         {
-            var attrNameToValue = GetAttributeValues();
+            var attrNameToValue = GetAttributeValueCodes();
             var validRules = GetValidRules(attrNameToValue);
             return validRules;
         }
@@ -38,9 +38,43 @@ namespace Dialog.Engine
             return this;
         }
         
+        public void ExecuteRuleOutcomes(DialogRule rule)
+        {
+            for (var i = 0; i < rule.Outcomes.Length; i++)
+            {
+                var outcome = rule.Outcomes[i];
+                var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(outcome.Target));
+                if (targetAttribute == null)
+                {
+                    throw new Exception("Couldnt execute rule, because target attribute couldnt be found. " + outcome.Target);
+                }
+                var values = GetAttributeActualValues();
 
-       
-        private Dictionary<string, long> GetAttributeValues()
+                switch (outcome.Command)
+                {
+                    case "set":
+                        var value = outcome.Arguments[""].ProcessAsPrefixMathTyped(values);
+                        targetAttribute.SetRealValue(value);
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown outcome command " + outcome.Command);
+                }
+
+            }
+        }
+
+        private Dictionary<string, object> GetAttributeActualValues()
+        {
+            var values = new Dictionary<string, object>(); // attribute name -> value
+            for (var i = 0; i < _attributes.Count; i++)
+            {
+                var attribute = _attributes[i];
+                attribute.Update();
+                values.Add(attribute.Name.ToLower(), attribute.GetRealValue());
+            }
+            return values;
+        }
+        private Dictionary<string, long> GetAttributeValueCodes()
         {
             var values = new Dictionary<string, long>(); // attribute name -> value
             for (var i = 0; i < _attributes.Count; i++)

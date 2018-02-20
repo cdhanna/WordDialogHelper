@@ -39,8 +39,46 @@ namespace DialogAddin.WordLang
         public override string VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
         {
             //var action =  Visit(context.text());
-            var action = "";
-            return $"(outcome action=[{action}])";
+
+            if (context.outcomeSetter() != null)
+            {
+                return Visit(context.outcomeSetter());
+            }
+            if (context.outcomeFunction() != null)
+            {
+                return Visit(context.outcomeFunction());
+            }
+            else throw new InvalidOperationException();
+        }
+
+        public override string VisitOutcomeSetter([NotNull] WordLangParser.OutcomeSetterContext context)
+        {
+
+            var toSet = Visit(context.referance());
+            var expr = Visit(context.expression());
+            return $"(set target=[{toSet}] expr=[{expr}])";
+        }
+
+        public override string VisitOutcomeFunction([NotNull] WordLangParser.OutcomeFunctionContext context)
+        {
+            var target = Visit(context.referance());
+            var args = "";
+            if (context.outcomeFunctionNamedBindingList() != null)
+            {
+                args = Visit(context.outcomeFunctionNamedBindingList());
+
+            }
+            return $"(run target=[{target}] args=[{args}])";
+        }
+
+        public override string VisitOutcomeFunctionNamedBindingList([NotNull] WordLangParser.OutcomeFunctionNamedBindingListContext context)
+        {
+            var ctx = context.outcomeFunctionNamedBinding();
+            var args = String.Join(",", ctx.Select(c =>
+            {
+                return $"(arg name=[{Visit(c.referance())}] expr=[{Visit(c.expression())}])";
+            }).ToArray());
+            return args;
         }
 
         public override string VisitDialogs([NotNull] WordLangParser.DialogsContext context)

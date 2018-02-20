@@ -136,5 +136,100 @@ namespace DialogTests.AttributeFetch
             });
             Assert.AreEqual(95, result);
         }
+
+
+        [TestMethod]
+        public void TypedSimpleAdd()
+        {
+            var math = "(+ 12 5)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(17, result);
+        }
+        [TestMethod]
+        public void TypedSimpleMultiply()
+        {
+            var math = "(* 5 5)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(25, result);
+        }
+        [TestMethod]
+        public void TypedSimpleDivide()
+        {
+            var math = "(/ 5 5)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(1, result);
+        }
+        [TestMethod]
+        public void TypedSimpleSubtract()
+        {
+            var math = "(- 5 5)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void TypedStringAdd()
+        {
+            var math = "(+ 'eggnog' 'tuna')";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual("eggnogtuna", result);
+        }
+
+        [TestMethod]
+        public void TypedStringAddNumber()
+        {
+            var math = "(+ 'eggnog' 6)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual("eggnog6", result);
+        }
+
+        [TestMethod]
+        public void TypedStringAddNumberReversed()
+        {
+            var math = "(+ 6 'a')";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual("6a", result);
+        }
+
+        [TestMethod]
+        public void TypedStringAddWithVar()
+        {
+            var math = "(+ 'eggnog' x)";
+            var result = math.ProcessAsPrefixMathTyped(new Dictionary<string, object>(){
+                { "x", "tuna"}
+            });
+            Assert.AreEqual("eggnogtuna", result);
+        }
+
+        [TestMethod]
+        public void TypedBoolAddIsOr()
+        {
+            var math = "(+ true true)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(true, result);
+        }
+        [TestMethod]
+        public void TypedBoolAddIsOr2()
+        {
+            var math = "(+ false true)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
+        public void TypedBoolMultIsAnd()
+        {
+            var math = "(* true true)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(true, result);
+        }
+        [TestMethod]
+        public void TypedBoolMultIsAnd2()
+        {
+            var math = "(* true false)";
+            var result = math.ProcessAsPrefixMathTyped();
+            Assert.AreEqual(false, result);
+        }
+
     }
 }

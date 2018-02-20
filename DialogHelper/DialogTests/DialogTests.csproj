@@ -64,6 +64,7 @@
     <Compile Include="AttributeFetch\BasicEngine.cs" />
     <Compile Include="Parsing\LexingMath.cs" />
     <Compile Include="Parsing\LexingWordLang.cs" />
+    <Compile Include="Parsing\OutcomeTests.cs" />
     <Compile Include="Parsing\ToDialog.cs" />
     <Compile Include="Parsing\ToTreeTests.cs" />
     <Compile Include="Parsing\ToASTTests.cs" />

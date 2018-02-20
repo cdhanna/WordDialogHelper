@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Dialog.Engine
@@ -9,6 +10,7 @@ namespace Dialog.Engine
     {
         public string Name { get; private set; }
         public long CurrentValue { get; private set; }
+        
 
         public DialogAttribute(string name)
         {
@@ -20,10 +22,22 @@ namespace Dialog.Engine
             return 0;
         }
 
+        public virtual object GetRealValue()
+        {
+            return 0;
+        }
+
+        public virtual void SetRealValue(object value)
+        {
+            // 
+        }
+
         public void Update()
         {
             CurrentValue = FetchValue();
         }
+
+       
 
         public static long ValueToLong(object obj)
         {
@@ -52,6 +66,18 @@ namespace Dialog.Engine
     {
         public static long ToLong(this string str)
         {
+
+            /*
+             * a -> 01
+             * b -> 02
+             * c -> 03
+             * ..
+             * z -> 26
+             * 
+             * abc -> 010203
+             * 
+             */
+
             return str.GetHashCode();
             
         }
@@ -62,6 +88,8 @@ namespace Dialog.Engine
 
         private object _target;
         private string[] _path;
+
+        private FieldInfo _lastFieldInfo;
 
         public ObjectDialogAttribute(object target, string baseName, params string[] path)
             : base(baseName + "." + String.Join(".", path))
@@ -80,8 +108,34 @@ namespace Dialog.Engine
                 var info = type.GetFields().FirstOrDefault(f => f.Name.ToLower().Equals(part.ToLower()));
                 if (info == null) return default(long);
                 obj = info.GetValue(obj);
+                _lastFieldInfo = info;
+
             }
             return DialogAttribute.ValueToLong(obj);
+        }
+
+        public override object GetRealValue()
+        {
+            var obj = _target;
+            foreach (var part in _path)
+            {
+                if (obj == null) return default(long);
+                var type = obj.GetType();
+                var info = type.GetFields().FirstOrDefault(f => f.Name.ToLower().Equals(part.ToLower()));
+                if (info == null) return default(long);
+                obj = info.GetValue(obj);
+                _lastFieldInfo = info;
+            }
+            return obj;
+        }
+
+        public override void SetRealValue(object value)
+        {
+            if (_lastFieldInfo == null)
+            {
+                throw new Exception("Attribute Never found matching field for " + Name);
+            }
+            _lastFieldInfo.SetValue(_target, value);
         }
     }
 }

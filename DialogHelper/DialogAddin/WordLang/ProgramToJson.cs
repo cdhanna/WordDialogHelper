@@ -25,7 +25,7 @@ namespace DialogAddin.WordLang
             var displayAs = Visit(context.displayAs());
             var conditions = Visit(context.conditions());
             var dialogs = Visit(context.dialogs());
-            var outcomes = "[]";//Visit(context.outcomes());
+            var outcomes = Visit(context.outcomes());
             return $"{{\"name\":{title},\"displayAs\":{displayAs},\"conditions\":{conditions},\"dialog\":{dialogs},\"outcomes\":{outcomes}}}";
         }
 
@@ -38,10 +38,45 @@ namespace DialogAddin.WordLang
         }
         public override string VisitSingleOutcome([NotNull] WordLangParser.SingleOutcomeContext context)
         {
-            //var action = Quotize(Visit(context.text()));
-            var action = "";
-            //return $"{{\"action\":{action}}}";
-            return $"{{}}";
+
+            if (context.outcomeSetter() != null)
+            {
+                return Visit(context.outcomeSetter());
+            }
+            if (context.outcomeFunction() != null)
+            {
+                return Visit(context.outcomeFunction());
+            }
+            throw new InvalidOperationException();
+        }
+
+        public override string VisitOutcomeSetter([NotNull] WordLangParser.OutcomeSetterContext context)
+        {
+            var target = Quotize(TreeVisitor.Visit(context.referance()));
+            var expr = Quotize(TreeVisitor.Visit(context.expression()));
+            return $"{{\"command\":\"set\",\"target\":{target},\"arguments\":{{\"\":{expr}}}}}";
+        }
+
+        public override string VisitOutcomeFunction([NotNull] WordLangParser.OutcomeFunctionContext context)
+        {
+            var target = Quotize(TreeVisitor.Visit(context.referance()));
+            var args = "{}";
+            if (context.outcomeFunctionNamedBindingList() != null)
+            {
+                args = Visit(context.outcomeFunctionNamedBindingList());
+            }
+            return $"{{\"command\":\"run\",\"target\":{target},\"arguments\":{args}}}";
+        }
+
+        public override string VisitOutcomeFunctionNamedBindingList([NotNull] WordLangParser.OutcomeFunctionNamedBindingListContext context)
+        {
+            var ctx = context.outcomeFunctionNamedBinding();
+            var args = String.Join(",", ctx.Select(c =>
+            {
+                return $"\"{TreeVisitor.Visit(c.referance())}\":\"{TreeVisitor.Visit(c.expression())}\"";
+            }).ToArray());
+            return $"{{{args}}}";
+
         }
 
         public override string VisitDialogs([NotNull] WordLangParser.DialogsContext context)

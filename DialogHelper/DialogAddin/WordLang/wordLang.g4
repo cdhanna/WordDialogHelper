@@ -39,15 +39,26 @@ outcomes
 	;
 
 singleOutcome
-	: outcomeSetter
-	| outcomeModifier
+	: outcomeFunction
+	| outcomeSetter
 	;
 
 outcomeSetter
-	: SET referance TO expression
+	: (SET referance TO expression)
+	| (referance EQUALTO expression)
 	;
-outcomeModifier
-	: MODIFY referance BY numberExpression
+
+outcomeFunction
+	: (RUN referance)
+	| (RUN referance outcomeFunctionNamedBindingList)
+	;
+
+outcomeFunctionNamedBindingList
+	: (NEWLINE? outcomeFunctionNamedBinding NEWLINE?)+
+	;
+
+outcomeFunctionNamedBinding
+	: (WITH referance AS expression)
 	;
 
 dialogLine
@@ -160,6 +171,9 @@ reservedWord
 	| MULTIPLY
 	| DIVIDE
 	| COMMA
+	| WITH
+	| RUN
+	| AS
 	;
 
 /*
@@ -181,6 +195,12 @@ LESSTHAN
 	: '<';
 
 
+RUN
+	: WHITESPACE? (R U N) WHITESPACE?;
+WITH
+	: WHITESPACE? (W I T H) WHITESPACE?;
+AS
+	: WHITESPACE? (A S) WHITESPACE?;
 BY
 	: WHITESPACE? (B Y) WHITESPACE?;
 MODIFY
@@ -236,6 +256,7 @@ fragment D : ('D'|'d');
 fragment E : ('E'|'e');
 fragment F : ('F'|'f');
 fragment G : ('G'|'g');
+fragment H : ('H'|'h');
 fragment I : ('I'|'i');
 fragment L : ('L'|'l');
 fragment M : ('M'|'m');
@@ -246,5 +267,6 @@ fragment S : ('S'|'s');
 fragment R : ('R'|'r');
 fragment T : ('T'|'t');
 fragment U : ('U'|'u');
+fragment W : ('W'|'w');
 fragment Y : ('Y'|'y');
 

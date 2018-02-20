@@ -98,11 +98,11 @@ namespace DialogAddin.WordLang
         {
             var errs = new List<GeneralError>();
 
-            var modifierErrs = context.outcomeModifier()?.Accept(this);
-            if (modifierErrs != null)
-            {
-                errs.AddRange(modifierErrs);
-            }
+            //var modifierErrs = context.outcomeModifier()?.Accept(this);
+            //if (modifierErrs != null)
+            //{
+            //    errs.AddRange(modifierErrs);
+            //}
 
             var setterErrs = context.outcomeSetter()?.Accept(this);
             if (setterErrs != null)

@@ -58,8 +58,8 @@ namespace Dialog
             [JsonProperty("target")]
             public string Target { get; set; }
 
-            [JsonProperty("argument")]
-            public string Argument { get; set; }
+            [JsonProperty("arguments")]
+            public Dictionary<string, string> Arguments { get; set; }
         }
     }
 }

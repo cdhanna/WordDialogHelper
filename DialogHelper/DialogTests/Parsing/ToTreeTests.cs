@@ -27,7 +27,9 @@ speaking line text
 :player2
 something meaningful
  outcomes
-    set x to y";
+    set x to y
+run actions.fart with power as 100 * player.fart
+with target as enemy";
 
             var rules = new DialogRule[]
             {
@@ -60,12 +62,25 @@ something meaningful
                     },
                     Outcomes = new DialogRule.DialogOutcome[]
                     {
-                        //new DialogRule.DialogOutcome()
-                        //{
-                        //    Command = "set",
-                        //    Target = "x",
-                        //    Argument = "y"
-                        //}
+                        new DialogRule.DialogOutcome()
+                        {
+                            Command = "set",
+                            Target = "x",
+                            Arguments = new Dictionary<string, string>()
+                            {
+                                { "", "y" }
+                            }
+                        },
+                        new DialogRule.DialogOutcome()
+                        {
+                            Command = "run",
+                            Target = "actions.fart",
+                            Arguments = new Dictionary<string, string>()
+                            {
+                                { "power", "(* 100 player.fart)" },
+                                { "target", "enemy" }
+                            }
+                        }
                     }
                     
                 }
