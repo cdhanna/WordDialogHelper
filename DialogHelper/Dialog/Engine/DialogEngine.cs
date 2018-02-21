@@ -12,10 +12,17 @@ namespace Dialog.Engine
 
         public DialogRule GetBestValidDialog()
         {
-            
             var attrNameToValue = GetAttributeValueCodes();
             var validRules = GetValidRules(attrNameToValue);
             var bestRule = GetBestRule(validRules);
+            return bestRule;
+        }
+
+        public DialogRule GetBestValidDialogForPlayer(string speaker)
+        {
+            var attrNameToValue = GetAttributeValueCodes();
+            var validRules = GetValidRules(attrNameToValue);
+            var bestRule = GetBestRuleForPlayer(validRules, speaker);
             return bestRule;
         }
 
@@ -198,6 +205,23 @@ namespace Dialog.Engine
             {
                 var rule = rules[i];
                 if (best == null || rule.Conditions.Length > best?.Conditions.Length)
+                {
+                    best = rule;
+                }
+            }
+            return best;
+        }
+
+        private DialogRule GetBestRuleForPlayer(List<DialogRule> rules, string speaker)
+        {
+            var best = default(DialogRule);
+            for (var i = 0; i < rules.Count; i++)
+            {
+                var rule = rules[i];
+                if (best != null 
+                    && rule.Conditions.Length > best?.Conditions.Length 
+                    && rule.Dialog.Length > 0
+                    && rule.Dialog[0].Speaker.ToLower().Equals(speaker))
                 {
                     best = rule;
                 }

@@ -7,17 +7,19 @@ using Word = Microsoft.Office.Interop.Word;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Word;
 using DialogAddin.VariableVisual;
+using DialogAddin.Host;
 
 namespace DialogAddin
 {
     public partial class ThisAddIn
     {
         private DialogService _srvc = new DialogService();
+        private DialogHost _host = new DialogHost();
         private WordSaveHandler wsh = null;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-            
+            _host.Start();
             //var pane = this.CustomTaskPanes.Add(control, "Dialog Helper");
             //pane.Visible = true;
 
@@ -42,6 +44,7 @@ namespace DialogAddin
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+            _host.Stop();
         }
 
 

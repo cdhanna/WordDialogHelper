@@ -80,5 +80,16 @@ namespace DialogAddin.VariableVisual.Controls
             }
       
         }
+
+        private void ConnectionToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (Model.IsClientConnected)
+            {
+                Model.Client.CloseConnection();
+            } else
+            {
+                Model.Client.StartConnection();
+            }
+        }
     }
 }

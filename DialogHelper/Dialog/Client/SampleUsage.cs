@@ -15,7 +15,7 @@ namespace Dialog.Client
 
             client.StartConnection();
 
-            client.OnNewRules += Client_OnNewRules;
+            client.OnRulePosted += Client_OnNewRules;
 
 
         }

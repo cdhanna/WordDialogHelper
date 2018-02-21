@@ -36,8 +36,19 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Header="TabItem">
-                <Grid/>
+            <TabItem Header="Server">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition MaxHeight="30" ></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Label>Connected?</Label>
+                        <Label Name="IsConnectedLabel" Content="{Binding Path=IsClientConnected}"></Label>
+                        <Button Name="ConnectionToggle" Click="ConnectionToggle_Click" Content="{Binding Path=ConnectToggleText}"></Button>
+                    </StackPanel>
+                    
+                </Grid>
             </TabItem>
         </TabControl>
 

@@ -1,4 +1,5 @@
 ﻿using Dialog;
+using Dialog.Client;
 using DialogAddin.Models;
 using DialogAddin.VariableVisual;
 using DialogAddin.WordLang;
@@ -31,8 +32,8 @@ namespace DialogAddin
         public Word.Style RuleNormalStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleNormal]; } }
 
 
-        public DialogActionPaneViewModel Model { get; set; } = new DialogActionPaneViewModel();
-
+        public DialogRuleClient Client { get; set; } = new DialogRuleClient();
+        public DialogActionPaneViewModel Model { get; set; }
         public List<Word.Comment> Comments { get; set; } = new List<Word.Comment>();
 
         //public Word.Range NextRange(Word.Range toFinish=null)
@@ -46,11 +47,16 @@ namespace DialogAddin
 
         public DialogService()
         {
+            Model = new DialogActionPaneViewModel(Client);
+
             Model.Variables.Add("int", "player.health");
             Model.Variables.Add("int", "player.ammo");
             Model.Variables.Add("int", "player.respect");
             Model.Variables.Add("int", "a");
             Model.Variables.Add("int", "b");
+
+           
+
         }
 
 

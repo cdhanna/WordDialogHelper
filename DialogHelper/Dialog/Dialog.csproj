@@ -45,9 +45,19 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\DialogRuleClient.cs" />
+    <Compile Include="Client\Messages\ClearRulesMessage.cs" />
+    <Compile Include="Client\Messages\ClearVariables.cs" />
+    <Compile Include="Client\Messages\DialogRuleClientMessage.cs" />
     <Compile Include="Client\IDialogRuleClient.cs" />
+    <Compile Include="Client\Messages\PostRuleMessage.cs" />
+    <Compile Include="Client\Messages\PostValueMessage.cs" />
+    <Compile Include="Client\Messages\PostVariableMessage.cs" />
     <Compile Include="Client\SampleUsage.cs" />
     <Compile Include="DialogRule.cs" />
     <Compile Include="Engine\DialogAttribute.cs" />
