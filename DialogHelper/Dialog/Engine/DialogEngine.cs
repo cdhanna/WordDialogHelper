@@ -161,6 +161,12 @@ namespace Dialog.Engine
                         case "=":
                             matched = leftValue == rightValue;
                             break;
+                        case "=!":
+                            matched = leftValue != rightValue;
+                            break;
+                        case "!=":
+                            matched = leftValue != rightValue;
+                            break;
                         case ">":
                             matched = leftValue > rightValue;
                             break;
