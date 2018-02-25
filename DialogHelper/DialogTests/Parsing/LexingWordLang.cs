@@ -67,7 +67,29 @@ namespace DialogTests.Parsing
             Assert.IsTrue(listener.AnyErrors);
         }
 
+        [TestMethod]
+        public void TemplateDialog()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr
+hello world, my name is {'Mr. ' + actor.name}
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+            var v = new ProgramToTree();
 
+            var line = v.Visit(program.ProgramContext.rule(0).dialogs().dialogLine(0));
+
+            Assert.AreEqual("(dialog speaker=[plr] parts=[(freetext line=[hello world, my name is ]),(templ expr=[(+ 'Mr. ' actor.name)])])", line);
+
+        }
 
         [TestMethod]
         public void OptionalDisplayAs()
@@ -543,32 +565,32 @@ dialogs
 :plr
 hello world
 outcomes
- MoDiFY toast.count by 5
+ set tuna.toast to 5
 ";
             var program = new WordLangResults(src);
 
             var names = L.tokenNames;
 
-            var expectedTokenTypes = new int[]
-            {
-                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DISPLAYAS, L.NEWLINE,
-                L.NAME, L.NEWLINE,
-                L.CONDITIONS, L.NEWLINE,
-                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DIALOGS, L.NEWLINE,
-                L.COLON, L.NAME, L.NEWLINE,
-                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.OUTCOMES, L.NEWLINE,
-                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.INTEGER
-            };
-            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
-            {
-                var expectedType = expectedTokenTypes[i];
-                var actualType = program.Tokens[i].Type;
+            //var expectedTokenTypes = new int[]
+            //{
+            //    L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.DISPLAYAS, L.NEWLINE,
+            //    L.NAME, L.NEWLINE,
+            //    L.CONDITIONS, L.NEWLINE,
+            //    L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.DIALOGS, L.NEWLINE,
+            //    L.COLON, L.NAME, L.NEWLINE,
+            //    L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
+            //    L.OUTCOMES, L.NEWLINE,
+            //    L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.INTEGER
+            //};
+            //for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
+            //{
+            //    var expectedType = expectedTokenTypes[i];
+            //    var actualType = program.Tokens[i].Type;
 
-                Assert.AreEqual(expectedType, actualType);
-            }
+            //    Assert.AreEqual(expectedType, actualType);
+            //}
 
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
@@ -584,32 +606,13 @@ dialogs
 :plr
 hello world
 outcomes
- MoDiFY toast.count by player.hunger
+ set toast.count to player.hunger
 ";
             var program = new WordLangResults(src);
 
             var names = L.tokenNames;
 
-            var expectedTokenTypes = new int[]
-            {
-                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DISPLAYAS, L.NEWLINE,
-                L.NAME, L.NEWLINE,
-                L.CONDITIONS, L.NEWLINE,
-                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DIALOGS, L.NEWLINE,
-                L.COLON, L.NAME, L.NEWLINE,
-                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.OUTCOMES, L.NEWLINE,
-                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.NAME, L.DOT, L.NAME
-            };
-            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
-            {
-                var expectedType = expectedTokenTypes[i];
-                var actualType = program.Tokens[i].Type;
-
-                Assert.AreEqual(expectedType, actualType);
-            }
+          
 
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
@@ -626,32 +629,13 @@ dialogs
 :plr
 hello world
 outcomes
- MoDiFY toast.count by -12
+ set toast.count to -12
 ";
             var program = new WordLangResults(src);
 
             var names = L.tokenNames;
 
-            var expectedTokenTypes = new int[]
-            {
-                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DISPLAYAS, L.NEWLINE,
-                L.NAME, L.NEWLINE,
-                L.CONDITIONS, L.NEWLINE,
-                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DIALOGS, L.NEWLINE,
-                L.COLON, L.NAME, L.NEWLINE,
-                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.OUTCOMES, L.NEWLINE,
-                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.MINUS, L.INTEGER
-            };
-            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
-            {
-                var expectedType = expectedTokenTypes[i];
-                var actualType = program.Tokens[i].Type;
-
-                Assert.AreEqual(expectedType, actualType);
-            }
+            
 
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
@@ -668,33 +652,13 @@ dialogs
 :plr
 hello world
 outcomes
- MoDiFY globalToast.count by -player.toastCount
+ set globalToast.count to -player.toastCount
 ";
             var program = new WordLangResults(src);
 
             var names = L.tokenNames;
 
-            var expectedTokenTypes = new int[]
-            {
-                L.NAME, L.WHITESPACE, L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DISPLAYAS, L.NEWLINE,
-                L.NAME, L.NEWLINE,
-                L.CONDITIONS, L.NEWLINE,
-                L.NAME,L.WHITESPACE, L.LESSTHAN, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.DIALOGS, L.NEWLINE,
-                L.COLON, L.NAME, L.NEWLINE,
-                L.NAME, L.WHITESPACE, L.NAME, L.NEWLINE,
-                L.OUTCOMES, L.NEWLINE,
-                L.MODIFY, L.NAME, L.DOT, L.NAME, L.BY, L.MINUS, L.NAME, L.DOT, L.NAME
-            };
-            for (var i = 0; i < Math.Min(expectedTokenTypes.Length, program.Tokens.Count); i++)
-            {
-                var expectedType = expectedTokenTypes[i];
-                var actualType = program.Tokens[i].Type;
-
-                Assert.AreEqual(expectedType, actualType);
-            }
-
+            
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
 

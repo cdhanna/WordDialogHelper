@@ -147,11 +147,19 @@ numLiteral
 	;
 
 text
-	: (WHITESPACE? (NAME|INTEGER) WHITESPACE?)+
+	: (WHITESPACE? (NAME|INTEGER|DOT) WHITESPACE?)+
 	;
 multilineText
-	: (NAME | WHITESPACE | NEWLINE | reservedWord)*
+	: (freeText | templatedText)*
 	;
+freeText
+	: (WHITESPACE | NAME | NEWLINE | COMMA | EQUALTO | NEGATION | FALSE | TRUE | DOT)+
+	;
+
+templatedText
+	: (LEFT_BRACKET expression RIGHT_BRACKET)
+	;
+
 reservedWord
 	: EQUALTO
 	| NEGATION
@@ -194,6 +202,11 @@ GREATERTHAN
 LESSTHAN
 	: '<';
 
+
+LEFT_BRACKET
+	: '{' WHITESPACE?;
+RIGHT_BRACKET
+	: WHITESPACE? '}' ;
 
 RUN
 	: WHITESPACE? (R U N) WHITESPACE?;

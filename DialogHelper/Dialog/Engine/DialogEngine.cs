@@ -45,6 +45,15 @@ namespace Dialog.Engine
             return this;
         }
         
+        public string[] ExecuteRuleDialogs(DialogRule rule)
+        {
+
+            var values = GetAttributeActualValues();
+            return rule.Dialog
+                .Select(d => String.Join("", d.ContentParts.Select(p => p.ProcessAsPrefixMathTyped(values))))
+                .ToArray();
+        }
+
         public void ExecuteRuleOutcomes(DialogRule rule)
         {
             for (var i = 0; i < rule.Outcomes.Length; i++)

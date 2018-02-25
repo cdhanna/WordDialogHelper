@@ -23,7 +23,7 @@ conditions
 player health + 50 > 100
 dialogs
 :player1        
-speaking line text
+speaking {player health + 12} line text
 :player2
 something meaningful
  outcomes
@@ -52,12 +52,22 @@ with target as enemy";
                         new DialogRule.DialogPart()
                         {
                             Speaker = "player1",
-                            Content = $"speaking line text"
+                            Content = "speaking {player health + 12} line text",
+                            ContentParts = new string[]
+                            {
+                                "'speaking '",
+                                "(+ player.health 12)",
+                                "' line text'"
+                            }
                         },
                         new DialogRule.DialogPart()
                         {
                             Speaker = "player2",
-                            Content = "something meaningful"
+                            Content = "something meaningful",
+                            ContentParts = new string[]
+                            {
+                                "'something meaningful'"
+                            }
                         }
                     },
                     Outcomes = new DialogRule.DialogOutcome[]
