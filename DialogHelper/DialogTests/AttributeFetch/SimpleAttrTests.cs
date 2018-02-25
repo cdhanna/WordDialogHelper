@@ -34,6 +34,27 @@ namespace DialogTests.AttributeFetch
         }
 
         [TestMethod]
+        public void GlobalAttrib()
+        {
+            var c = true;
+            var attr = GlobalDialogAttribute.New("c", val => c = val, () => c);
+
+            attr.Update();
+
+            var output = attr.CurrentValue;
+
+            Assert.AreEqual(1, output);
+
+            c = false;
+            attr.Update();
+            Assert.AreEqual(0, attr.CurrentValue);
+
+            attr.Invoke(true);
+            attr.Update();
+            Assert.AreEqual(1, attr.CurrentValue);
+        }
+
+        [TestMethod]
         public void SimpleNestedTest()
         {
             var dc = new DummyCollection();

@@ -64,6 +64,7 @@
     <Compile Include="DialogRule.cs" />
     <Compile Include="Engine\DialogAttribute.cs" />
     <Compile Include="Engine\DialogEngine.cs" />
+    <Compile Include="Engine\GlobalDialogAttribute.cs" />
     <Compile Include="Engine\MathExtensions.cs" />
     <Compile Include="Engine\MathProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
