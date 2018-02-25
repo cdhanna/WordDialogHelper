@@ -309,6 +309,64 @@ set a to b
         }
 
         [TestMethod]
+        public void ConditionGreatherThan0()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x > 0
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+        }
+
+        [TestMethod]
+        public void DialogCanHaveBoldMarkup()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x > 0
+dialogs
+:plr
+hello <b> world </b>
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+
+        [TestMethod]
+        public void DialogCanHaveColorMarkup()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x > 0
+dialogs
+:plr
+hello <color='red'> world </color>
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
         public void ValidLiteralBool()
         {
             var src = @"A Nifty Rule

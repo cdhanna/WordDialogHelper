@@ -83,6 +83,61 @@ namespace DialogTests.AttributeFetch
 
         }
 
+        [TestMethod]
+        public void TemplateInterpStrings()
+        {
+            var player = new Actor();
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    },
+                    Dialog = new DialogRule.DialogPart[]
+                    {
+                        new DialogRule.DialogPart()
+                        {
+                            Speaker ="player",
+                            Content = "my health is <color='red'> great </color>",
+                            ContentParts = new string[]
+                            {
+                                "'my health is <color='red'> great </color>'",
+                            }
+                        }
+                    }
+                },
+
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine();
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+
+            var dialogs = engine.ExecuteRuleDialogs(best);
+            Assert.AreEqual(1, dialogs.Length);
+            Assert.AreEqual("my health is <color='red'> great </color>", dialogs[0]);
+
+        }
 
         [TestMethod]
         public void SimpleEngine()

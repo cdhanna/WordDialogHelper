@@ -153,7 +153,7 @@ multilineText
 	: (freeText | templatedText)*
 	;
 freeText
-	: (WHITESPACE | NAME | NEWLINE | COMMA | EQUALTO | NEGATION | FALSE | TRUE | DOT)+
+	: (WHITESPACE | NAME | NEWLINE | COMMA | EQUALTO | NEGATION | FALSE | TRUE | DOT | LESSTHAN | GREATERTHAN | DIVIDE | QUOTE | DBLQUOTE)+
 	;
 
 templatedText
@@ -244,7 +244,7 @@ RIGHT_PAREN
 	: WHITESPACE? ')' WHITESPACE?;
 
 INTEGER
-	: [1-9] [0-9]*;
+	: ([1-9] [0-9]*)|'0';
 NAME
 	: [a-zA-Z_] [a-zA-Z0-9_]*;
 

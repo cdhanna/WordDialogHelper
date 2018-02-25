@@ -118,7 +118,7 @@ namespace Dialog.Engine
                         var j = i;
                         var v = c;
                         bool inString = false;
-                        while (j > -1 && (v != ' '||inString) && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        while (j > -1 && (v != ' '||inString) ) //&& v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
                         {
                             if (v == '\'' || v == '"')
                             {

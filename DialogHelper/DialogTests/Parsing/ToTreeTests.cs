@@ -25,7 +25,9 @@ dialogs
 :player1        
 speaking {player health + 12} line text
 :player2
-something meaningful
+something <b>meaningful</b>
+:player3
+this is <color='red'> red text </color>
  outcomes
     set x to y
 run actions.fart with power as 100 * player.fart
@@ -63,10 +65,19 @@ with target as enemy";
                         new DialogRule.DialogPart()
                         {
                             Speaker = "player2",
-                            Content = "something meaningful",
+                            Content = "something <b>meaningful</b>",
                             ContentParts = new string[]
                             {
-                                "'something meaningful'"
+                                "'something <b>meaningful</b>'"
+                            }
+                        },
+                        new DialogRule.DialogPart()
+                        {
+                            Speaker = "player3",
+                            Content = "this is <color='red'> red text </color>",
+                            ContentParts = new string[]
+                            {
+                                "'this is <color='red'> red text </color>'"
                             }
                         }
                     },
