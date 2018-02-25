@@ -92,7 +92,7 @@ namespace DialogAddin.WordLang
         {
             var speaker = Visit(context.text());
             var line = Visit(context.multilineText());
-            return $"(dialog speaker=[{speaker}] line=[{line}])";
+            return $"(dialog speaker=[{speaker}] parts=[{line}])";
         }
 
         public override string VisitConditions([NotNull] WordLangParser.ConditionsContext context)
@@ -292,7 +292,41 @@ namespace DialogAddin.WordLang
 
         public override string VisitMultilineText([NotNull] WordLangParser.MultilineTextContext context)
         {
-            return context.GetText();
+
+            var freeTexts = context.freeText();
+            for (var i = 0; i < freeTexts.Length; i++)
+            {
+                var text = freeTexts[i];
+                var index = text.RuleIndex;
+            }
+
+
+            var children = context.children;
+            var parts = new List<string>();
+            for (var i = 0; i< children.Count; i++)
+            {
+                var child = children[i];
+                parts.Add(Visit(child));
+                if (child is WordLangParser.FreeTextContext)
+                {
+                } else if (child is WordLangParser.TemplatedTextContext)
+                {
+
+                }
+            }
+
+            return string.Join(",", parts);
+        }
+
+        public override string VisitFreeText([NotNull] WordLangParser.FreeTextContext context)
+        {
+            return $"(freetext line=[{context.GetText()}])";
+        }
+
+        public override string VisitTemplatedText([NotNull] WordLangParser.TemplatedTextContext context)
+        {
+            var expr = Visit(context.expression());
+            return $"(templ expr=[{expr}])";
         }
 
     }

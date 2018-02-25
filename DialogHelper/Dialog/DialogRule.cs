@@ -36,6 +36,9 @@ namespace Dialog
 
             [JsonProperty("content")]
             public string Content { get; set; }
+
+            [JsonProperty("parts")]
+            public string[] ContentParts { get; set; }
         }
 
         public class DialogCondition

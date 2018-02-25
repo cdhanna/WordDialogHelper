@@ -117,8 +117,13 @@ namespace Dialog.Engine
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        while (j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        bool inString = false;
+                        while (j > -1 && (v != ' '||inString) ) //&& v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
                         {
+                            if (v == '\'' || v == '"')
+                            {
+                                inString = !inString;
+                            }
                             buildingSym = v + buildingSym;
                             j--;
                             v = j > -1 ? expression[j] : ' ';
@@ -133,7 +138,7 @@ namespace Dialog.Engine
                         {
                             stack.Push(false);
                         }
-                        else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'"))
+                        else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'") && buildingSym.Length > 1)
                         {
                             stack.Push(buildingSym.Substring(1, buildingSym.Length - 2));
                         }

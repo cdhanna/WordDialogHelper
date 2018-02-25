@@ -90,8 +90,9 @@ namespace DialogAddin.WordLang
         public override string VisitDialogLine([NotNull] WordLangParser.DialogLineContext context)
         {
             var speaker = Quotize(Visit(context.text()));
-            var line = Quotize(Visit(context.multilineText()));
-            return $"{{\"speaker\":{speaker},\"content\":{line}}}";
+            var line = Quotize(context.multilineText().GetText());
+            var parts = Visit(context.multilineText());
+            return $"{{\"speaker\":{speaker},\"content\":{line},\"parts\":{parts}}}";
         }
 
         public override string VisitConditions([NotNull] WordLangParser.ConditionsContext context)
@@ -163,7 +164,28 @@ namespace DialogAddin.WordLang
 
         public override string VisitMultilineText([NotNull] WordLangParser.MultilineTextContext context)
         {
-            return context.GetText();
+
+            var children = context.children;
+            var parts = new List<string>();
+            for (var i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                var text = child.GetText();
+                parts.Add(Visit(child));
+            }
+
+            return $"[{string.Join(",", parts)}]";
+        }
+
+        public override string VisitFreeText([NotNull] WordLangParser.FreeTextContext context)
+        {
+            return Quotize("'" + context.GetText() + "'");
+        }
+
+        public override string VisitTemplatedText([NotNull] WordLangParser.TemplatedTextContext context)
+        {
+            var expr = Quotize(TreeVisitor.Visit(context.expression()));
+            return expr;
         }
 
         private string Quotize(string str)
