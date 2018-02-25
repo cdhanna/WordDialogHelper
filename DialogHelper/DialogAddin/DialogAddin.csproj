@@ -202,6 +202,7 @@
   -->
   <ItemGroup>
     <Compile Include="AddinVersion.cs" />
+    <Compile Include="DialogManifest.cs" />
     <Compile Include="DialogRibbon.cs" />
     <Compile Include="Host\DialogClientBehavour.cs" />
     <Compile Include="Host\DialogHost.cs" />

@@ -18,7 +18,7 @@ namespace Dialog.Engine
             return bestRule;
         }
 
-        public DialogRule GetBestValidDialogForPlayer(string speaker)
+        public DialogRule GetBestValidDialogForPlayer(string speaker="player")
         {
             var attrNameToValue = GetAttributeValueCodes();
             var validRules = GetValidRules(attrNameToValue);
@@ -31,6 +31,15 @@ namespace Dialog.Engine
             var attrNameToValue = GetAttributeValueCodes();
             var validRules = GetValidRules(attrNameToValue);
             return validRules;
+        }
+
+        public List<DialogRule> GetAllValidDialogForPlayer(string speaker="player")
+        {
+            var attrNameToValue = GetAttributeValueCodes();
+            var validRules = GetValidRules(attrNameToValue);
+            return validRules
+                .Where(r => r.Dialog.Count() > 0 && r.Dialog.First().Speaker.Equals(speaker))
+                .ToList();
         }
 
         public DialogEngine AddRule(DialogRule rule)
