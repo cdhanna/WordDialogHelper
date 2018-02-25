@@ -913,9 +913,9 @@ set a to b";
         [TestMethod]
         public void ValidRule()
         {
-            var src = @"a nifty rule
+            var src = @"a nifty to set rule
      displayAs 
-   tunafish rep 
+   tunafish to set bell tolls rep 
 conditions    
 yaday.first is not blahblah some more   
     another line of fun = twice the pain 
