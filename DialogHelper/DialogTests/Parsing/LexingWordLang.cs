@@ -921,7 +921,7 @@ yaday.first is not blahblah some more
     another line of fun = twice the pain 
 dialogs
 :player 1        
-speaking line text
+speaking line text set to bell tolls
 multi line
 
 :player2
