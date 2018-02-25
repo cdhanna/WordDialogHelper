@@ -204,6 +204,7 @@
     <Compile Include="AddinVersion.cs" />
     <Compile Include="DialogManifest.cs" />
     <Compile Include="DialogRibbon.cs" />
+    <Compile Include="Host\DevManifest.cs" />
     <Compile Include="Host\DialogClientBehavour.cs" />
     <Compile Include="Host\DialogHost.cs" />
     <Compile Include="Models\JsonRuleModels.cs" />

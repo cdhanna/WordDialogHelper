@@ -55,10 +55,12 @@
     <Compile Include="Client\Messages\ClearVariables.cs" />
     <Compile Include="Client\Messages\DialogRuleClientMessage.cs" />
     <Compile Include="Client\IDialogRuleClient.cs" />
+    <Compile Include="Client\Messages\PostManifestMessage.cs" />
     <Compile Include="Client\Messages\PostRuleMessage.cs" />
     <Compile Include="Client\Messages\PostValueMessage.cs" />
     <Compile Include="Client\Messages\PostVariableMessage.cs" />
     <Compile Include="Client\SampleUsage.cs" />
+    <Compile Include="DevManifest.cs" />
     <Compile Include="DialogRule.cs" />
     <Compile Include="Engine\DialogAttribute.cs" />
     <Compile Include="Engine\DialogEngine.cs" />

@@ -39,5 +39,8 @@ namespace DialogAddin.VariableVisual
         public bool IsClientConnected { get { return Client.IsConnected; } }
         public string ConnectToggleText { get { return IsClientConnected ? "Disconnect" : "Connect"; } }
 
+        public string ManifestName { get { return "Tuna"; } }
+        public int ManifestFileCount { get { return 43; } }
+
     }
 }

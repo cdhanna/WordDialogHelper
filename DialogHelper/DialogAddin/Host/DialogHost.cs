@@ -10,6 +10,8 @@ namespace DialogAddin.Host
     class DialogHost
     {
 
+        public DevManifest DevManifiest { get; private set; }
+
         private WebSocketServer _server;
 
         public void Start(string host="localhost", int port=9090, string protocol="ws")
@@ -18,7 +20,14 @@ namespace DialogAddin.Host
             _server.AddWebSocketService<DialogClientBehavour>("/dialog");
             _server.ReuseAddress = true;
 
-            
+            DevManifiest = new DevManifest()
+            {
+                Name = "Empty",
+                Files = new string[] {
+                    "monkey.docx",
+                    "paste.docx"
+                }
+            };
 
             _server.Start();
         }
@@ -27,5 +36,9 @@ namespace DialogAddin.Host
         {
             _server.Stop();
         }
+
+        
+        //public void 
+
     }
 }

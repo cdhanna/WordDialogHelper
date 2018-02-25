@@ -47,7 +47,12 @@
                         <Label Name="IsConnectedLabel" Content="{Binding Path=IsClientConnected}"></Label>
                         <Button Name="ConnectionToggle" Click="ConnectionToggle_Click" Content="{Binding Path=ConnectToggleText}"></Button>
                     </StackPanel>
-                    
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Label Content="Manifest:"></Label>
+                        <Label Content="{Binding Path=ManifestName}"></Label>
+                        <Label Content="FileCount:"></Label>
+                        <Label Content="{Binding Path=ManifestFileCount}"></Label>
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

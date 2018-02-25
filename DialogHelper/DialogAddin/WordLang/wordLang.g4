@@ -147,7 +147,7 @@ numLiteral
 	;
 
 text
-	: (WHITESPACE? (NAME|INTEGER|DOT) WHITESPACE?)+
+	: (WHITESPACE? (NAME|INTEGER|DOT|WHITESPACE) WHITESPACE?)+
 	;
 multilineText
 	: (freeText | templatedText)*
