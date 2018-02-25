@@ -367,6 +367,27 @@ set a to b
         }
 
         [TestMethod]
+        public void DialogCanHaveColorHexCode()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x > 0
+dialogs
+:plr
+hello <color=#ff000000> world </color>
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+
+
+        [TestMethod]
         public void ValidLiteralBool()
         {
             var src = @"A Nifty Rule
