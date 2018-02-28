@@ -62,7 +62,10 @@
     <Compile Include="Client\SampleUsage.cs" />
     <Compile Include="DevManifest.cs" />
     <Compile Include="DialogRule.cs" />
+    <Compile Include="Engine\AttributeCollection.cs" />
+    <Compile Include="Engine\AttributeExtensions.cs" />
     <Compile Include="Engine\DialogAttribute.cs" />
+    <Compile Include="Engine\DialogAttributeBag.cs" />
     <Compile Include="Engine\DialogEngine.cs" />
     <Compile Include="Engine\GlobalDialogAttribute.cs" />
     <Compile Include="Engine\MathExtensions.cs" />

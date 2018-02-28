@@ -44,8 +44,63 @@ namespace Dialog.Engine
 
         public DialogEngine AddRule(DialogRule rule)
         {
+            // extract any references
+            var refs = ExtractReferencesFromRule(rule);
+
+            // TODO add optimization; if we have already seen a reference go by, never find it again. It has already been placed into the correct bag.
+
+            // if any refs match bag prefix, 
+            var bagAttrs = _attributes
+                .OfType<BagDialogAttribute>()
+                .ToList();
+            for (var i = 0; i < refs.Count; i++)
+            {
+                var bestAttr = default(BagDialogAttribute);
+                for (var b = 0; b < bagAttrs.Count; b ++)
+                {
+                    if (refs[i].StartsWith(bagAttrs[b].Name) && (bestAttr == null || bagAttrs[b].Name.Length >= bestAttr.Name.Length))
+                    {
+                        bestAttr = bagAttrs[b];
+                    }
+                }
+                if (bestAttr != null)
+                {
+                    bestAttr.Add(this, new BagElement()
+                    {
+                        name = refs[i].Substring(bestAttr.Name.Length + 1),
+                        value = false
+                    });
+                }
+            }
+
             _rules.Add(rule);
             return this;
+        }
+
+        public List<string> ExtractReferencesFromRule(DialogRule rule)
+        {
+            var references = new List<string>();
+
+            for (var i = 0; i < rule.Conditions?.Length; i++)
+            {
+                references.AddRange(rule.Conditions[i].Left.ExtractReferences());
+                references.AddRange(rule.Conditions[i].Right.ExtractReferences());
+            }
+
+            for (var i = 0; i < rule.Dialog?.Length; i++)
+            {
+                references.AddRange(rule.Dialog[i].Content.ExtractReferences());
+            }
+
+            for (var i = 0; i < rule?.Outcomes?.Length; i++)
+            {
+                references.AddRange(rule.Outcomes[i].Target.ExtractReferences());
+                rule.Outcomes[i].Arguments.Values.Select(v => v.ExtractReferences())
+                    .ToList().ForEach(refs => references.AddRange(refs)) ;
+                //references.AddRange(rule.Outcomes[i].Arguments.)
+            }
+
+            return references.Distinct().ToList();
         }
 
         public DialogEngine AddAttribute(DialogAttribute attribute)
@@ -161,16 +216,16 @@ namespace Dialog.Engine
                         case "=":
                             matched = leftValue == rightValue;
                             break;
+                        case "!=":
                         case "=!":
                             matched = leftValue != rightValue;
                             break;
-                        case "!=":
-                            matched = leftValue != rightValue;
-                            break;
                         case ">":
+                        case "!<":
                             matched = leftValue > rightValue;
                             break;
                         case "<":
+                        case ">!":
                             matched = leftValue < rightValue;
                             break;
                         default:
@@ -187,41 +242,7 @@ namespace Dialog.Engine
             }
             return validRules;
         }
-
-        private long HackyParse(string expr, Dictionary<string, long> attrNameToValue)
-        {
-            
-            if (expr.Length > 0 &&
-                (expr[0].Equals("\"")
-                || expr[0].Equals("'")))
-            {
-                // strip quotes
-                return expr.Substring(1, expr.Length - 2).ToLong();
-            }
-            else if (expr.Length > 0 &&
-              (expr[0].Equals('0')
-              || expr[0].Equals('1')
-              || expr[0].Equals('2')
-              || expr[0].Equals('3')
-              || expr[0].Equals('4')
-              || expr[0].Equals('5')
-              || expr[0].Equals('6')
-              || expr[0].Equals('7')
-              || expr[0].Equals('8')
-              || expr[0].Equals('9')
-              ))
-            {
-                return long.Parse(expr);
-            }
-            else if (expr.Equals("false") || expr.Equals("true"))
-            {
-                return (expr.Equals("false") ? 0 : 1);
-            } else
-            {
-                return attrNameToValue[expr];
-            }
-        }
-
+        
         private DialogRule GetBestRule(List<DialogRule> rules)
         {
             var best = default(DialogRule);

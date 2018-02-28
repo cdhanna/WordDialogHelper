@@ -149,11 +149,13 @@ namespace Dialog.Engine
                         else
                         {
                             buildingSym = buildingSym.ToLower();
-                            if (!variables.ContainsKey(buildingSym))
-                            {
-                                throw new Exception($"Cannot evaluate expression, because {buildingSym} did not exist");
-                            }
-                            stack.Push(variables[buildingSym]);
+                            var value = variables.ExtractAttribute(buildingSym);
+                            stack.Push(value);
+                            //if (!variables.ContainsKey(buildingSym))
+                            //{
+                            //    throw new Exception($"Cannot evaluate expression, because {buildingSym} did not exist");
+                            //}
+                            //stack.Push(variables[buildingSym]);
                         }
 
 
@@ -245,7 +247,9 @@ namespace Dialog.Engine
                         }
                         else
                         {
-                            stack.Push(variables[buildingSym]);
+                            var value = variables.ExtractAttribute(buildingSym);
+
+                            stack.Push(value);
                         }
 
 

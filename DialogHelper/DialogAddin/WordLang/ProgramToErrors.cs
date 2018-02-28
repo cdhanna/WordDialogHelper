@@ -196,12 +196,12 @@ namespace DialogAddin.WordLang
             var errs = new List<GeneralError>();
             var path = ResolveReference(context);
 
-            var variable = _variables.GetFromPath(path);
+            //var variable = _variables.GetFromPath(path);
 
-            if (variable == null)
-            {
-                errs.Add(context.NewError("Unknown variable: " + String.Join(".", path)));
-            }
+            //if (variable == null)
+            //{
+            //    errs.Add(context.NewError("Unknown variable: " + String.Join(".", path)));
+            //}
 
             return errs;
         }
