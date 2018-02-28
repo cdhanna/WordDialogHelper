@@ -47,6 +47,9 @@ namespace DialogAddin
         {
             _srvc = srvc;
             _addin = addin;
+
+            
+           
         }
 
         #region IRibbonExtensibility Members
@@ -64,7 +67,14 @@ namespace DialogAddin
         public void Ribbon_Load(Office.IRibbonUI ribbonUI)
         {
             this.ribbon = ribbonUI;
-            
+            //_addin.Application.
+            _addin.Application.DocumentChange += () =>
+            {
+                if (ConfigHelper.Config.IsPanelOpen)
+                {
+                    onShowMenu(null);
+                }
+            };
         }
 
         public void onShowMenu(Office.IRibbonControl ribbon)
@@ -73,11 +83,14 @@ namespace DialogAddin
             if (currentPane == null)
             {
                 var control = new VariablePageContainer();
-
-                
+                ConfigHelper.Config.IsPanelOpen = true;
                 control.SetModel(_srvc.Model);
-
                 currentPane = _addin.CustomTaskPanes.Add(control, VariablePageContainer.TITLE, _srvc.ActiveDocument.ActiveWindow);
+                currentPane.VisibleChanged += (s, a) =>
+                {
+                    
+                    ConfigHelper.Config.IsPanelOpen = currentPane.Visible;
+                };
             }
             currentPane.Visible = true;
         }

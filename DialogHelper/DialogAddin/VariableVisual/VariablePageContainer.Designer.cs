@@ -26,6 +26,8 @@
         public void SetModel(DialogActionPaneViewModel model)
         {
             main1.DataContext = model;
+            main1.Setup();
+            //model.PropertyChanged += main1.Model_PropertyChanged;
         }
 
         #region Component Designer generated code

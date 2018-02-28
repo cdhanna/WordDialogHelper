@@ -24,6 +24,55 @@ namespace DialogAddin.VariableVisual.Controls
         public Main()
         {
             InitializeComponent();
+
+            
+
+        }
+
+       
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+        }
+
+        public void Setup()
+        {
+            Dispatcher.Invoke(() =>
+           {
+
+               Model.PropertyChanged += Model_PropertyChanged;
+               LoadedFile.Content = Model.LoadedVariableFile;
+           });
+
+        }
+        int x = 0;
+        public void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+           {
+
+               switch (e.PropertyName)
+               {
+                   case nameof(Model.Variables):
+                       //VariableGrid.it
+                       x += 1;
+                       try
+                       {
+                           
+                           VariableGrid.Items.Refresh();
+                       } catch (InvalidOperationException ex)
+                       {
+                           throw ex;
+                       }
+                       break;
+                   case nameof(Model.LoadedVariableFile):
+                       LoadedFile.Content = Model.LoadedVariableFile;
+                       break;
+                   default:
+                       break;
+               }
+           });
         }
 
         public DialogActionPaneViewModel Model { get { return (DialogActionPaneViewModel)DataContext; } }
@@ -38,44 +87,47 @@ namespace DialogAddin.VariableVisual.Controls
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 var fileName = dialog.FileName;
-                LoadedFile.Content = fileName;
+                //Dispatcher.Invoke(() =>
+               // {
+                    Model.LoadVariablesFromFile(fileName);
 
-                var lines = new List<string>();
-                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var sr = new StreamReader(fs, Encoding.Default))
-                {
-                    while (!sr.EndOfStream)
-                        lines.Add(sr.ReadLine());
-                }
+               // });
+                //var lines = new List<string>();
+                //using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                //using (var sr = new StreamReader(fs, Encoding.Default))
+                //{
+                //    while (!sr.EndOfStream)
+                //        lines.Add(sr.ReadLine());
+                //}
                 
-                Model.Variables.Clear();
+                //Model.Variables.Clear();
 
-                if (lines.Count > 0)
-                {
-                    var headers = lines.First().ToLower().Split(',');
-                    for (var i = 1; i < lines.Count; i++)
-                    {
-                        var data = lines[i].ToLower().Split(',');
-                        var type = "unknown";
-                        var name = "unknown";
-                        for (var eIndex = 0; eIndex < data.Length && eIndex < headers.Length; eIndex ++)
-                        {
-                            switch (headers[eIndex])
-                            {
-                                case "type":
-                                    type = data[eIndex];
-                                    break;
-                                case "name":
-                                    name = data[eIndex];
-                                    break;
-                                default:
-                                    throw new InvalidOperationException("Invalid parse column " + headers[eIndex]);
-                            }
-                        }
-                        Model.Variables.Add(type, name);
-                        VariableGrid.Items.Refresh();
-                    }
-                }
+                //if (lines.Count > 0)
+                //{
+                //    var headers = lines.First().ToLower().Split(',');
+                //    for (var i = 1; i < lines.Count; i++)
+                //    {
+                //        var data = lines[i].ToLower().Split(',');
+                //        var type = "unknown";
+                //        var name = "unknown";
+                //        for (var eIndex = 0; eIndex < data.Length && eIndex < headers.Length; eIndex ++)
+                //        {
+                //            switch (headers[eIndex])
+                //            {
+                //                case "type":
+                //                    type = data[eIndex];
+                //                    break;
+                //                case "name":
+                //                    name = data[eIndex];
+                //                    break;
+                //                default:
+                //                    throw new InvalidOperationException("Invalid parse column " + headers[eIndex]);
+                //            }
+                //        }
+                //        Model.Variables.Add(type, name);
+                //        VariableGrid.Items.Refresh();
+                //    }
+                //}
 
             }
       

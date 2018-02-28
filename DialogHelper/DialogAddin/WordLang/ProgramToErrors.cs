@@ -208,15 +208,31 @@ namespace DialogAddin.WordLang
 
         public string[] ResolveReference(WordLangParser.ReferanceContext context)
         {
-            var full = new List<string>();
-            var part = context.NAME().GetText().ToLower();
-            full.Add(part);
-            if (context.referance() != null)
+            try
             {
-                var other = ResolveReference(context.referance());
-                full.AddRange(other);
+                var full = new List<string>();
+                var part = context.NAME()?.GetText()?.ToLower();
+                if (part != null)
+                {
+                    full.Add(part);
+
+                }
+                else
+                {
+                    return full.ToArray();
+                }
+
+                if (context.referance() != null)
+                {
+                    var other = ResolveReference(context.referance());
+                    full.AddRange(other);
+                }
+                return full.ToArray();
+            } catch (Exception ex)
+            {
+                Console.WriteLine("error in prog->errs ");
+                throw ex;
             }
-            return full.ToArray();
         }
 
     }

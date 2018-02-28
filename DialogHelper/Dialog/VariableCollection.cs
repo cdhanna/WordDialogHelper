@@ -10,6 +10,8 @@ namespace Dialog
     {
         private List<Variable> _variables = new List<Variable>();
 
+        public List<Variable> Source { get { return _variables; } }
+
         public VariableCollection Clear()
         {
             _variables.Clear();
@@ -38,6 +40,7 @@ namespace Dialog
 
         public IEnumerator<Variable> GetEnumerator()
         {
+            
             return _variables.GetEnumerator();
         }
 

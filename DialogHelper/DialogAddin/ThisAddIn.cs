@@ -20,6 +20,7 @@ namespace DialogAddin
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             _host.Start();
+            
             //var pane = this.CustomTaskPanes.Add(control, "Dialog Helper");
             //pane.Visible = true;
 
@@ -44,6 +45,7 @@ namespace DialogAddin
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+            ConfigHelper.Save();
             _host.Stop();
         }
 
@@ -51,7 +53,9 @@ namespace DialogAddin
 
         protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new DialogRibbon(this, _srvc);
+            var ribbon = new DialogRibbon(this, _srvc);
+           
+            return ribbon;
         }
 
         #region VSTO generated code

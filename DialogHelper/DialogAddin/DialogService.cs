@@ -48,13 +48,8 @@ namespace DialogAddin
         public DialogService()
         {
             Model = new DialogActionPaneViewModel(Client);
-
-            Model.Variables.Add("int", "player.health");
-            Model.Variables.Add("int", "player.ammo");
-            Model.Variables.Add("int", "player.respect");
-            Model.Variables.Add("int", "a");
-            Model.Variables.Add("int", "b");
-
+            Model.LoadVariablesFromFile(ConfigHelper.Config.DefaultCSVPath);
+            
            
 
         }
