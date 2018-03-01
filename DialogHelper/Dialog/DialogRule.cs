@@ -26,6 +26,21 @@ namespace Dialog
         [JsonProperty("outcomes")]
         public DialogOutcome[] Outcomes { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as DialogRule);
+        }
+
+        public bool Equals(DialogRule other)
+        {
+            if (other == null) return false;
+            return other.Name.Equals(Name)
+                && other.DisplayAs.Equals(DisplayAs)
+                && (other.Conditions != null && other.Conditions.SequenceEqual(Conditions))
+                && (other.Outcomes != null && other.Outcomes.SequenceEqual(Outcomes))
+                && (other.Dialog != null && other.Dialog.SequenceEqual(Dialog));
+        }
+
         public class DialogPart
         {
             //[JsonProperty("guid")]
@@ -39,6 +54,19 @@ namespace Dialog
 
             [JsonProperty("parts")]
             public string[] ContentParts { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as DialogPart);
+            }
+
+            public bool Equals(DialogPart other)
+            {
+                if (other == null) return false;
+                return other.Speaker.Equals(Speaker)
+                    && other.Content.Equals(Content)
+                    && other.ContentParts.SequenceEqual(ContentParts);
+            }
         }
 
         public class DialogCondition
@@ -50,7 +78,18 @@ namespace Dialog
 
             [JsonProperty("right")]
             public string Right { get; set; }
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as DialogCondition);
+            }
 
+            public bool Equals(DialogCondition other)
+            {
+                if (other == null) return false;
+                return other.Op.Equals(Op)
+                    && other.Left.Equals(Left)
+                    && other.Right.Equals(Right);
+            }
         }
 
         public class DialogOutcome
@@ -63,6 +102,19 @@ namespace Dialog
 
             [JsonProperty("arguments")]
             public Dictionary<string, string> Arguments { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as DialogOutcome);
+            }
+
+            public bool Equals(DialogOutcome other)
+            {
+                if (other == null) return false;
+                return other.Command.Equals(Command)
+                    && other.Target.Equals(Target)
+                    && other.Arguments.SequenceEqual(Arguments);
+            }
         }
     }
 }

@@ -60,6 +60,8 @@
     <Compile Include="Client\Messages\PostValueMessage.cs" />
     <Compile Include="Client\Messages\PostVariableMessage.cs" />
     <Compile Include="Client\SampleUsage.cs" />
+    <Compile Include="DialogBundle.cs" />
+    <Compile Include="DialogConditionSet.cs" />
     <Compile Include="DevManifest.cs" />
     <Compile Include="DialogRule.cs" />
     <Compile Include="Engine\AttributeCollection.cs" />

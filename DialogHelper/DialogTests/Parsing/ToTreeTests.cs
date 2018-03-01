@@ -106,7 +106,19 @@ with target as enemy";
                     
                 }
             };
-            var expected = JsonConvert.SerializeObject(rules);
+
+            var bundle = new DialogBundle()
+            {
+                Name = "test",
+                Rules = rules,
+               
+            };
+            
+            var expected = JsonConvert.SerializeObject(bundle, Formatting.None, new JsonSerializerSettings()
+            {
+
+                StringEscapeHandling = StringEscapeHandling.Default
+            });
             //var expected = "[" +
             //    "{" +
             //        "\"title\":\"a nifty rule\"," +
@@ -155,12 +167,11 @@ with target as enemy";
 
             Assert.IsNotNull(output);
 
-
+            var backwards = JsonConvert.DeserializeObject<DialogBundle>(output);
+            Assert.AreEqual(backwards, bundle);
             Assert.AreEqual(expected, output);
 
-
-            var parsed = JsonConvert.DeserializeObject<DialogRule[]>(output);
-
+            
         }
 
         [TestMethod]

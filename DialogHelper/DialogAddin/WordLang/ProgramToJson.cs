@@ -16,7 +16,9 @@ namespace DialogAddin.WordLang
                 .Select(ctx => Visit(ctx))
                 .CombineWithCommas()
                 ;
-            return $"[{rules}]";
+            return $"{{\"name\":\"test\",\"rules\":[{rules}],\"conditionSets\":null}}";
+
+            //return $"[{rules}]";
         }
 
         public override string VisitRule([NotNull] WordLangParser.RuleContext context)
