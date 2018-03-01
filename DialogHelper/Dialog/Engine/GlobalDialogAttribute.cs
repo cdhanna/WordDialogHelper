@@ -8,10 +8,7 @@ namespace Dialog.Engine
 {
     public static class GlobalDialogAttribute
     {
-        public static GlobalDialogAttribute<T> New<T>(string name, Action<T> setter, Func<T> getter)
-        {
-            return new GlobalDialogAttribute<T>(name, setter, getter);
-        }
+        
     }
 
     public class GlobalDialogAttribute<T> : DialogAttribute

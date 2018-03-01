@@ -8,6 +8,18 @@ namespace Dialog.Engine
 {
     public class DialogAttribute
     {
+
+        public static BagDialogAttribute<TData, TElem> New<TData, TElem>(string name, TData defaultValue, List<TElem> elements)
+            where TElem : BagElement<TData>
+        {
+            return new BagDialogAttribute<TData, TElem>(name, defaultValue, elements);
+        }
+        public static GlobalDialogAttribute<T> New<T>(string name, Action<T> setter, Func<T> getter)
+        {
+            return new GlobalDialogAttribute<T>(name, setter, getter);
+        }
+
+
         public string Name { get; private set; }
         public long CurrentValue { get; private set; }
         
@@ -26,6 +38,7 @@ namespace Dialog.Engine
         {
             return 0;
         }
+
 
         public void Invoke(object value)
         {

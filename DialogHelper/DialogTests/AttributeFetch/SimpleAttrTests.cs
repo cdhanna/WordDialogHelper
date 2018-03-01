@@ -37,7 +37,7 @@ namespace DialogTests.AttributeFetch
         public void GlobalAttrib()
         {
             var c = true;
-            var attr = GlobalDialogAttribute.New("c", val => c = val, () => c);
+            var attr = DialogAttribute.New("c", val => c = val, () => c);
 
             attr.Update();
 

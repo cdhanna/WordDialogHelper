@@ -6,32 +6,51 @@ using System.Threading.Tasks;
 
 namespace Dialog.Engine
 {
+    //[Serializable]
+    //public class BagElement
+    //{
+    //    public string name;
+    //    public bool value;
+    //}
+
+    
+
     [Serializable]
-    public class BagElement
+    public class BagElement<T>
     {
         public string name;
-        public bool value;
+        public T value;
     }
 
-    public class BagDialogAttribute : DialogAttribute
+    [Serializable]
+    public class BagBoolElement : BagElement<bool> { }
+    [Serializable]
+    public class BagIntElement : BagElement<int> { }
+    [Serializable]
+    public class BagStringElement : BagElement<string> { }
+
+
+    public class BagDialogAttribute<TData, TElem> : DialogAttribute
+        where TElem : BagElement<TData>
     {
-        public List<BagElement> Elements { get; private set; }
+        public List<TElem> Elements { get; private set; }
 
-        private Dictionary<string, BagElement> _nameToElement = new Dictionary<string, BagElement>();
+        private Dictionary<string, TElem> _nameToElement = new Dictionary<string, TElem>();
         private Dictionary<string, DialogAttribute> _nameToAttribute = new Dictionary<string, DialogAttribute>();
+        public TData DefaultValue { get; set; }
 
-
-        public BagDialogAttribute(string baseName, List<BagElement> elements) : base(baseName)
+        public BagDialogAttribute(string baseName, TData defaultValue, List<TElem> elements) : base(baseName)
         {
             Elements = elements;
+            DefaultValue = defaultValue;
             if (Elements == null)
             {
-                Elements = new List<BagElement>();
+                Elements = new List<TElem>();
             }
 
         }
 
-        public void Add(DialogEngine dEngine, BagElement element)
+        public void Add(DialogEngine dEngine, TElem element)
         {
             if (!_nameToElement.ContainsKey(element.name))
             {
@@ -42,7 +61,7 @@ namespace Dialog.Engine
                 }
                 _nameToElement.Add(element.name, element);
 
-                dEngine.AddAttribute(GlobalDialogAttribute.New(Name + '.' + element.name, v => element.value = v, () => element.value));
+                dEngine.AddAttribute(DialogAttribute.New(Name + '.' + element.name, v => element.value = v, () => element.value));
 
             }
         }
@@ -59,7 +78,7 @@ namespace Dialog.Engine
             throw new Exception($"This is a bag attribute, and can never be invoked directly {Name}");
         }
 
-        public BagDialogAttribute UpdateElements(DialogEngine dEngine)
+        public BagDialogAttribute<TData, TElem> UpdateElements(DialogEngine dEngine)
         {
             Elements.ForEach(e => Add(dEngine, e));
             return this;

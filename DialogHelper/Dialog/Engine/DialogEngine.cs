@@ -10,6 +10,8 @@ namespace Dialog.Engine
         private List<DialogAttribute> _attributes = new List<DialogAttribute>();
         private List<DialogRule> _rules = new List<DialogRule>();
 
+        private List<EngineAdditionHandler> _onAdditionHandlers = new List<EngineAdditionHandler>();
+
         public DialogRule GetBestValidDialog()
         {
             var attrNameToValue = GetAttributeValueCodes();
@@ -42,36 +44,49 @@ namespace Dialog.Engine
                 .ToList();
         }
 
+        public DialogEngine AddHandler(EngineAdditionHandler ruleHandler)
+        {
+            _onAdditionHandlers.Add(ruleHandler);
+            return this;
+        }
+
         public DialogEngine AddRule(DialogRule rule)
         {
-            // extract any references
+
             var refs = ExtractReferencesFromRule(rule);
+            for (var i = 0; i < _onAdditionHandlers.Count; i++)
+            {
+                _onAdditionHandlers[i].HandleNewRule(this, rule, refs);
+            }
+
+            // extract any references
 
             // TODO add optimization; if we have already seen a reference go by, never find it again. It has already been placed into the correct bag.
 
             // if any refs match bag prefix, 
-            var bagAttrs = _attributes
-                .OfType<BagDialogAttribute>()
-                .ToList();
-            for (var i = 0; i < refs.Count; i++)
-            {
-                var bestAttr = default(BagDialogAttribute);
-                for (var b = 0; b < bagAttrs.Count; b ++)
-                {
-                    if (refs[i].StartsWith(bagAttrs[b].Name) && (bestAttr == null || bagAttrs[b].Name.Length >= bestAttr.Name.Length))
-                    {
-                        bestAttr = bagAttrs[b];
-                    }
-                }
-                if (bestAttr != null)
-                {
-                    bestAttr.Add(this, new BagElement()
-                    {
-                        name = refs[i].Substring(bestAttr.Name.Length + 1),
-                        value = false
-                    });
-                }
-            }
+            
+            //var bagAttrs = _attributes
+            //    .OfType<BagDialogAttribute>()
+            //    .ToList();
+            //for (var i = 0; i < refs.Count; i++)
+            //{
+            //    var bestAttr = default(BagDialogAttribute);
+            //    for (var b = 0; b < bagAttrs.Count; b ++)
+            //    {
+            //        if (refs[i].StartsWith(bagAttrs[b].Name) && (bestAttr == null || bagAttrs[b].Name.Length >= bestAttr.Name.Length))
+            //        {
+            //            bestAttr = bagAttrs[b];
+            //        }
+            //    }
+            //    if (bestAttr != null)
+            //    {
+            //        bestAttr.Add(this, new BagElement()
+            //        {
+            //            name = refs[i].Substring(bestAttr.Name.Length + 1),
+            //            value = false
+            //        });
+            //    }
+            //}
 
             _rules.Add(rule);
             return this;
@@ -105,6 +120,10 @@ namespace Dialog.Engine
 
         public DialogEngine AddAttribute(DialogAttribute attribute)
         {
+            for (var i = 0; i < _onAdditionHandlers.Count; i++)
+            {
+                _onAdditionHandlers[i].HandleNewAttribute(this, attribute);
+            }
             _attributes.Add(attribute);
             return this;
         }
