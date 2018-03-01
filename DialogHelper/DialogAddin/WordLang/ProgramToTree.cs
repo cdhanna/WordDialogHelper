@@ -222,7 +222,7 @@ namespace DialogAddin.WordLang
 
         public override string VisitReferance([NotNull] WordLangParser.ReferanceContext context)
         {
-            var part = context.NAME().GetText();
+            var part = context.allowedReferenceWords().GetText();
             if (context.referance() != null)
             {
                 var rest = Visit(context.referance());

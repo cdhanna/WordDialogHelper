@@ -211,7 +211,7 @@ namespace DialogAddin.WordLang
             try
             {
                 var full = new List<string>();
-                var part = context.NAME()?.GetText()?.ToLower();
+                var part = context.allowedReferenceWords()?.GetText()?.ToLower();
                 if (part != null)
                 {
                     full.Add(part);

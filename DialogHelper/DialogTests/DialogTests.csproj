@@ -64,6 +64,7 @@
     <Compile Include="AttributeFetch\BasicEngine.cs" />
     <Compile Include="AttributeFetch\BagAttrTest.cs" />
     <Compile Include="Parsing\ComplicatedParse.cs" />
+    <Compile Include="Parsing\ConditionSets.cs" />
     <Compile Include="Parsing\LexingMath.cs" />
     <Compile Include="Parsing\LexingWordLang.cs" />
     <Compile Include="Parsing\OutcomeTests.cs" />

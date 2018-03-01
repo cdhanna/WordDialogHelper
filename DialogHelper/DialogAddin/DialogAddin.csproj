@@ -233,7 +233,6 @@
     <Compile Include="WordLang\AST\RuleSet.cs" />
     <Compile Include="WordLang\AST\RuleTitle.cs" />
     <Compile Include="WordLang\AST\RuleTree.cs" />
-    <Compile Include="WordLang\ProgramToDialogJson.cs" />
     <Compile Include="WordLang\ProgramToErrors.cs" />
     <Compile Include="WordLang\ProgramToAST.cs" />
     <Compile Include="WordLang\ProgramToJson.cs" />

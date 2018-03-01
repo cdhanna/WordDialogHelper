@@ -51,6 +51,104 @@ set a to b
         }
 
         [TestMethod]
+        public void ConditionsInName()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+conditions x is y
+dialogs
+:plr
+I am as cool as sliced break
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void ConditionsInName2()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+conditions x is y
+b is y
+dialogs
+:plr
+I am as cool as sliced break
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void ConditionsInName3()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+conditions x is y
+b is y
+dialogs
+:plr
+I am as cool as sliced break
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void AsInName()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+xas is y
+dialogs
+:plr
+I am as cool as sliced break
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void IsInname()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+isto is x
+dialogs
+:plr
+I am as cool as sliced break
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
         public void WithInDialog()
         {
             var src = @"A Nifty Rule

@@ -12,7 +12,16 @@ b is c
 /*
  * Parser Rules
  */
-prog: rule+ EOF;
+prog: (rule|conditionSet|NEWLINE)+ EOF;
+
+progBlock
+	: (rule | conditionSet | NEWLINE)
+	| (rule | conditionSet | NEWLINE) progBlock
+	;
+
+conditionSet
+	: ruleTitle conditions
+	;
 
 rule
 	: ruleTitle displayAs conditions dialogs outcomes
@@ -121,8 +130,12 @@ numberExpression
 	;
 
 referance
-	: NAME | NAME (referanceSeparator referance)?
+	: allowedReferenceWords | allowedReferenceWords (referanceSeparator referance)?
 	;
+allowedReferenceWords
+	: NAME | CONDITIONS | AS | TO | WITH | MODIFY | IS
+	;
+
 referanceSeparator
 	: WHITESPACE | DOT
 	;
@@ -147,13 +160,13 @@ numLiteral
 	;
 
 text
-	: (WHITESPACE? (NAME|INTEGER|DOT|WHITESPACE|TO|SET|COMMA|TRUE|FALSE|QUOTE|MODIFY|BY|NEGATION|MAYBE) WHITESPACE?)+
+	: (WHITESPACE? (NAME|INTEGER|DOT|WHITESPACE|TO|SET|COMMA|TRUE|FALSE|QUOTE|MODIFY|BY|NEGATION|CONDITIONS|MAYBE) WHITESPACE?)+
 	;
 multilineText
 	: (freeText | templatedText)*
 	;
 freeText
-	: (WHITESPACE | NAME | NEWLINE | TO | SET | BY 
+	: (WHITESPACE | NAME | NEWLINE | TO | SET | BY | CONDITIONS
 	| MODIFY |COMMA | EQUALTO | NEGATION | MAYBE | FALSE | AS | WITH
 	| TRUE | DOT | POUND | LESSTHAN | GREATERTHAN 
 	| DIVIDE | QUOTE | DBLQUOTE)+
@@ -193,10 +206,10 @@ reservedWord
 
 COLON : ':';
 COMMA: ',';
-DISPLAYAS	: D I S P L A Y   A S   SPACE*;
-CONDITIONS	: C O N D I T I O N S   SPACE*; 
-DIALOGS		: D I A L O G S         SPACE*;
-OUTCOMES	: O U T C O M E S       SPACE*;
+CONDITIONS	: C O N D I T I O N S   ; 
+DISPLAYAS	: D I S P L A Y   A S   ;
+DIALOGS		: D I A L O G S         ;
+OUTCOMES	: O U T C O M E S       ;
 WHITESPACE          
 	: (' '|'\t')+ ;
 

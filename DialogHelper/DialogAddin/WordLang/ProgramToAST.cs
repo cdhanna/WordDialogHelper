@@ -16,10 +16,10 @@ namespace DialogAddin.WordLang
         {
             var ruleSet = new AST.RuleSet();
 
-            ruleSet.Rules = context.rule()
-                .Select(ctx => Visit(ctx))
-                .OfType<AST.Rule>()
-                .ToList();
+            //ruleSet.Rules = context.rule()
+            //    .Select(ctx => Visit(ctx))
+            //    .OfType<AST.Rule>()
+            //    .ToList();
 
             return ruleSet;
         }
