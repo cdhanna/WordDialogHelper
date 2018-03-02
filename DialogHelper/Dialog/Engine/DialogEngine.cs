@@ -9,8 +9,19 @@ namespace Dialog.Engine
 
         private List<DialogAttribute> _attributes = new List<DialogAttribute>();
         private List<DialogRule> _rules = new List<DialogRule>();
-
+        private List<DialogConditionSet> _conditionSets = new List<DialogConditionSet>();
         private List<EngineAdditionHandler> _onAdditionHandlers = new List<EngineAdditionHandler>();
+
+        public DialogAttribute GetAttribute(string key)
+        {
+            try
+            {
+                return _attributes.First(a => a.Name.Equals(key.ToLower()));
+            } catch (Exception ex)
+            {
+                throw new Exception($"key did not exist {key}", ex);
+            }
+        }
 
         public DialogRule GetBestValidDialog()
         {
@@ -47,6 +58,17 @@ namespace Dialog.Engine
         public DialogEngine AddHandler(EngineAdditionHandler ruleHandler)
         {
             _onAdditionHandlers.Add(ruleHandler);
+            return this;
+        }
+
+        public DialogEngine AddConditionSet(DialogConditionSet condition)
+        {
+            var refs = ExtractReferencesFromCondition(condition);
+            for (var i = 0; i < _onAdditionHandlers.Count; i++)
+            {
+                _onAdditionHandlers[i].HandleNewConditionSet(this, condition, refs);
+            }
+            _conditionSets.Add(condition);
             return this;
         }
 
@@ -115,6 +137,19 @@ namespace Dialog.Engine
                 //references.AddRange(rule.Outcomes[i].Arguments.)
             }
 
+            return references.Distinct().ToList();
+        }
+
+        public List<string> ExtractReferencesFromCondition(DialogConditionSet condition)
+        {
+            var references = new List<string>();
+
+            for (var i = 0; i < condition.Conditions?.Length; i++)
+            {
+                references.AddRange(condition.Conditions[i].Left.ExtractReferences());
+                references.AddRange(condition.Conditions[i].Right.ExtractReferences());
+            }
+            
             return references.Distinct().ToList();
         }
 
@@ -205,30 +240,9 @@ namespace Dialog.Engine
                 {
                     var condition = rule.Conditions[j];
 
-
-                    /*
-                     * the Left and Right will always be expressions.
-                     * 
-                     * At the moment, an expression is 
-                         * expr: literal | reference
-                         * literal: NUMBER | STRING | TRUE | FALSE
-                         * reference: NAME | NAME SEPARATOR reference
-                     * 
-                     * So we can write a cheap parser to handle that, with these hacky rules...
-                     * 1. if the first character is 0-9, its a literal NUMBER
-                     * 2. if the first character is a " or ', its a literal STRING
-                     * 3. if the expr is false or true, its a literal BOOL
-                     * 4. otherwise, its a reference
-                     * 
-                     */
-
-                    //var leftValue = HackyParse(condition.Left.ToLower(), attrNameToValue);
-                    //var rightValue = HackyParse(condition.Right.ToLower(), attrNameToValue);
                     var leftValue = condition.Left.ToLower().ProcessAsPrefixMath(attrNameToValue);
                     var rightValue = condition.Right.ToLower().ProcessAsPrefixMath(attrNameToValue);
 
-                    //var leftValue = attrNameToValue[condition.Left.ToLower()]; // assume that the attribute exists, I guess.
-                    //var rightValue = attrNameToValue[condition.Right.ToLower()];
                     var matched = false;
                     switch (condition.Op) // TODO add negation support
                     {

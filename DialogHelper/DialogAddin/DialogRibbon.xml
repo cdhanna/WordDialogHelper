@@ -9,7 +9,11 @@
           <button id="addRuleButton" label="Add Rule"
             screentip="Text" onAction="OnAddRule"
             supertip="Adds a blank rule to the end of the document."/>
-
+          
+          <button id="addConditionSetButton" label="Add Condition Set"
+                      screentip="Text" onAction="OnAddCondition"
+                      supertip="Adds a blank conditional set to the end of the document."/>
+          
           <button id="save" label="Save as JSON"
             screentip="Save" onAction="OnSave"
             supertip="Saves the document as rule JSON."/>

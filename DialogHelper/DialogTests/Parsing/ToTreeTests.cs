@@ -16,7 +16,12 @@ namespace DialogTests.Parsing
         [TestMethod]
         public void SimpleJSON()
         {
-            var src = @"  a nifty rule 
+            var src = @"
+tunafish 
+conditions
+a is b
+
+a nifty rule 
      displayAs 
    tunafish rep 
 conditions    
@@ -111,7 +116,22 @@ with target as enemy";
             {
                 Name = "test",
                 Rules = rules,
-               
+                ConditionSets = new DialogConditionSet[]
+                {
+                    new DialogConditionSet()
+                    {
+                        Name = "tunafish",
+                        Conditions = new DialogConditionSet.DialogCondition[]
+                        {
+                            new DialogConditionSet.DialogCondition()
+                            {
+                                Left = "a",
+                                Op = "=",
+                                Right = "b"
+                            }
+                        }
+                    }
+                }
             };
             
             var expected = JsonConvert.SerializeObject(bundle, Formatting.None, new JsonSerializerSettings()

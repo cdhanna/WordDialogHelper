@@ -25,6 +25,7 @@ namespace DialogAddin
 
         public Word.Document ActiveDocument { get { return Globals.ThisAddIn.Application.ActiveDocument; } }
         public Word.Range EndOfDocument { get { return ActiveDocument.Range(ActiveDocument.Characters.Last.Start); } }
+        public Word.Range StartOfDocument { get { return ActiveDocument.Range(0); } }
 
         public Word.Style RuleHeadingStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleHeading1]; } }
         public Word.Style RuleSectionStyle { get { return ActiveDocument.Styles[Word.WdBuiltinStyle.wdStyleHeading2]; } }
@@ -55,6 +56,23 @@ namespace DialogAddin
         }
 
 
+        public void AddEmptyConditionSet()
+        {
+            var title = ActiveDocument.Paragraphs.Add(EndOfDocument);
+            title.Range.Text = "ConditionSet";
+            title.set_Style(RuleHeadingStyle);
+            title.LeftIndent = -12;
+            title.Range.Text += "\n";
+            var preConditions = ActiveDocument.Paragraphs.Add(EndOfDocument);
+            preConditions.Range.Text = SECTION_PRECONDITIONS;
+            preConditions.set_Style(RuleSectionStyle);
+            preConditions.Range.Text += "\n";
+
+            var bullets = ActiveDocument.Paragraphs.Add(EndOfDocument);
+            bullets.set_Style(RuleNormalStyle);
+            bullets.Range.ListFormat.ApplyBulletDefault();
+            bullets.Range.InsertBefore("a is b");
+        }
 
         public void AddEmptyRule()
         {

@@ -14,11 +14,6 @@ b is c
  */
 prog: (rule|conditionSet|NEWLINE)+ EOF;
 
-progBlock
-	: (rule | conditionSet | NEWLINE)
-	| (rule | conditionSet | NEWLINE) progBlock
-	;
-
 conditionSet
 	: ruleTitle conditions
 	;

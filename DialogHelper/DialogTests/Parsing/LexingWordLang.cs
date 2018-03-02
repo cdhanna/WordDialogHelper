@@ -346,6 +346,26 @@ set a to b
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
         }
 
+        [TestMethod]
+        public void CanDialogHaveEllipses()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x > 0
+dialogs
+:plr
+...hello... there...
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+
 
         [TestMethod]
         public void DialogCanHaveColorMarkup()

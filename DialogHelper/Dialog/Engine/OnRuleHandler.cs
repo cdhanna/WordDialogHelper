@@ -19,6 +19,38 @@ namespace Dialog.Engine
 
         }
 
+        public virtual void HandleNewConditionSet(DialogEngine engine, DialogConditionSet condition, List<string> extractedRefs)
+        {
+
+        }
+
+    }
+
+
+    public class ConditionSetEvalHandler : EngineAdditionHandler
+    {
+        public string GlobalName { get; private set; }
+
+        public ConditionSetEvalHandler(string globalName)
+        {
+            GlobalName = globalName.ToLower();
+        }
+
+        public override void HandleNewConditionSet(DialogEngine engine, DialogConditionSet condition, List<string> extractedRefs)
+        {
+            // add an attribute for every condition that is set.
+
+            engine.AddAttribute(DialogAttribute.New(GlobalName + "." + condition.Name,
+                v => { }, // ignore set
+                () =>
+                {
+                    //condition.Conditions.
+                    return false;
+                }
+            ));
+
+            base.HandleNewConditionSet(engine, condition, extractedRefs);
+        }
     }
 
     public class BagIntHandler : BagAttributesRuleAddedHandler<int, BagIntElement>
@@ -51,14 +83,29 @@ namespace Dialog.Engine
             base.HandleNewAttribute(engine, attrib);
         }
 
+        public override void HandleNewConditionSet(DialogEngine engine, DialogConditionSet condition, List<string> extractedRefs)
+        {
+            HandleRefs(engine, extractedRefs);
+            base.HandleNewConditionSet(engine, condition, extractedRefs);
+        }
+
         public override void HandleNewRule(DialogEngine engine, DialogRule rule, List<string> extractedRefs)
+        {
+            HandleRefs(engine, extractedRefs);
+            base.HandleNewRule(engine, rule, extractedRefs);
+        }
+
+        private void HandleRefs(DialogEngine engine, List<string> extractedRefs)
         {
             for (var i = 0; i < extractedRefs.Count; i++)
             {
                 var bestAttr = default(BagDialogAttribute<TData, TElem>);
                 for (var b = 0; b < _attribs.Count; b++)
                 {
-                    if (extractedRefs[i].StartsWith(_attribs[b].Name) && (bestAttr == null || _attribs[b].Name.Length >= bestAttr.Name.Length))
+                    if (extractedRefs[i].StartsWith(_attribs[b].Name)
+                        && (bestAttr == null
+                            || _attribs[b].Name.Length >= bestAttr.Name.Length)
+                            )
                     {
                         bestAttr = _attribs[b];
                     }
@@ -72,9 +119,6 @@ namespace Dialog.Engine
                     });
                 }
             }
-
-
-            base.HandleNewRule(engine, rule, extractedRefs);
         }
     }
 }

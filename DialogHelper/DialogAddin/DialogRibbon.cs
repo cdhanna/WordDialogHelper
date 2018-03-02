@@ -101,6 +101,11 @@ namespace DialogAddin
 
         }
 
+        public void OnAddCondition(Office.IRibbonControl ribbon)
+        {
+            _srvc.AddEmptyConditionSet();
+        }
+
         public void OnSave(Office.IRibbonControl ribbon)
         {
             //var scanned = _srvc.Scan();

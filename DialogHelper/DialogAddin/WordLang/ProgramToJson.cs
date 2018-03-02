@@ -16,9 +16,20 @@ namespace DialogAddin.WordLang
                 .Select(ctx => Visit(ctx))
                 .CombineWithCommas()
                 ;
-            return $"{{\"name\":\"test\",\"rules\":[{rules}],\"conditionSets\":null}}";
+            var conds = context.conditionSet()
+                .Select(ctx => Visit(ctx))
+                .CombineWithCommas()
+                ;
+            return $"{{\"name\":\"test\",\"rules\":[{rules}],\"conditionSets\":[{conds}]}}";
 
             //return $"[{rules}]";
+        }
+
+        public override string VisitConditionSet([NotNull] WordLangParser.ConditionSetContext context)
+        {
+            var title = Visit(context.ruleTitle());
+            var conditions = Visit(context.conditions());
+            return $"{{\"name\":{title},\"conditions\":{conditions}}}";
         }
 
         public override string VisitRule([NotNull] WordLangParser.RuleContext context)
