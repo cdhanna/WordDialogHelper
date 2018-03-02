@@ -114,7 +114,7 @@ namespace DialogTests.AttributeFetch
             };
 
             var engine = new DialogEngine()
-                .AddHandler(new BagIntHandler());
+                .AddHandler(new BagBoolHandler());
             var attributes = new DialogAttribute[]
             {
                 new ObjectDialogAttribute(player, "player", "health"),
