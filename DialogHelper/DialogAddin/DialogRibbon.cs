@@ -68,13 +68,14 @@ namespace DialogAddin
         {
             this.ribbon = ribbonUI;
             //_addin.Application.
-            _addin.Application.DocumentChange += () =>
-            {
-                if (ConfigHelper.Config.IsPanelOpen)
-                {
-                    onShowMenu(null);
-                }
-            };
+            //_addin.Application.DocumentChange += () =>
+            //{
+                
+            //    if (ConfigHelper.Config.IsPanelOpen )
+            //    {
+            //        onShowMenu(null);
+            //    }
+            //};
         }
 
         public void onShowMenu(Office.IRibbonControl ribbon)

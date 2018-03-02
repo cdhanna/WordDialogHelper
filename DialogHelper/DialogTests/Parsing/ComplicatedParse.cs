@@ -13,6 +13,45 @@ namespace DialogTests.Parsing
     {
 
         [TestMethod]
+        public void WordApostrophie()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr
+hello world! he’s I am here, to give you a lesson on rythm anatomy.
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void CommaInName()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr, the great
+hello world! I am here, to give you a lesson on rythm anatomy.
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+
+        [TestMethod]
         public void PunctuationInDialog()
         {
             var src = @"A Nifty Rule

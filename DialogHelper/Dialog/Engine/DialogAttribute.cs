@@ -26,7 +26,7 @@ namespace Dialog.Engine
 
         public DialogAttribute(string name)
         {
-            Name = name;
+            Name = name.ToLower();
         }
 
         protected virtual long FetchValue()

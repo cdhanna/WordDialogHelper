@@ -45,6 +45,7 @@ namespace DialogAddin
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+            
             ConfigHelper.Save();
             _host.Stop();
         }

@@ -12,15 +12,14 @@ namespace Dialog.Engine
         private List<DialogConditionSet> _conditionSets = new List<DialogConditionSet>();
         private List<EngineAdditionHandler> _onAdditionHandlers = new List<EngineAdditionHandler>();
 
-        public DialogAttribute GetAttribute(string key)
+        public string[] GetHandlerNames
         {
-            try
-            {
-                return _attributes.First(a => a.Name.Equals(key.ToLower()));
-            } catch (Exception ex)
-            {
-                throw new Exception($"key did not exist {key}", ex);
-            }
+            get { return _onAdditionHandlers.Select(s => s.GetType().Name).ToArray(); }
+        }
+
+        public List<string> GetAttributeNames()
+        {
+            return _attributes.Select(a => a.Name).ToList();
         }
 
         public DialogRule GetBestValidDialog()
@@ -124,10 +123,12 @@ namespace Dialog.Engine
                 references.AddRange(rule.Conditions[i].Right.ExtractReferences());
             }
 
-            for (var i = 0; i < rule.Dialog?.Length; i++)
-            {
-                references.AddRange(rule.Dialog[i].Content.ExtractReferences());
-            }
+            //for (var i = 0; i < rule.Dialog?.Length; i++)
+            //{
+            //    rule.Dialog[i].ContentParts.Select(p => p.ExtractReferences()).ToList()
+            //        .ForEach(refs => references.AddRange(refs));
+            //    //references.AddRange(rule.Dialog[i].Content.ExtractReferences());
+            //}
 
             for (var i = 0; i < rule?.Outcomes?.Length; i++)
             {

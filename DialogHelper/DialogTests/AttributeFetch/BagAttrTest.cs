@@ -140,13 +140,9 @@ namespace DialogTests.AttributeFetch
             var player = new
             {
                 health = 10,
-                flags = new BagIntElement[]
+                ints = new BagIntElement[]
                 {
-                    new BagIntElement()
-                    {
-                        name = "a",
-                        value = 5
-                    }
+                    
                 }.ToList()
             };
 
@@ -159,13 +155,13 @@ namespace DialogTests.AttributeFetch
                     {
                         new DialogRule.DialogCondition()
                         {
-                            Left = "player.flags.a",
+                            Left = "player.ints.a",
                             Op = "=",
-                            Right = "5"
+                            Right = "10"
                         },
                         new DialogRule.DialogCondition()
                         {
-                            Left = "player.flags.b",
+                            Left = "player.ints.hidaldo.rep",
                             Op = ">",
                             Right = "6"
                         }
@@ -179,7 +175,7 @@ namespace DialogTests.AttributeFetch
             var attributes = new DialogAttribute[]
             {
                 new ObjectDialogAttribute(player, "player", "health"),
-                DialogAttribute.New("player.flags", 10, player.flags ).UpdateElements(engine)
+                DialogAttribute.New("player.ints", 10, player.ints ).UpdateElements(engine)
                 //new BagDialogAttribute<bool>("player.flags", player.flags).UpdateElements(engine)
             };
 

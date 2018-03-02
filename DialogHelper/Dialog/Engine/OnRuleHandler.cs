@@ -78,6 +78,7 @@ namespace Dialog.Engine
         {
             if (attrib is BagDialogAttribute<TData, TElem>)
             {
+                Console.WriteLine($"ADDING BAG ATTRIBUTE {typeof(TData).Name}, {typeof(TElem).Name}");
                 _attribs.Add(attrib as BagDialogAttribute<TData, TElem>);
             }
             base.HandleNewAttribute(engine, attrib);
@@ -114,7 +115,7 @@ namespace Dialog.Engine
                 {
                     bestAttr.Add(engine, new TElem()
                     {
-                        name = extractedRefs[i].Substring(bestAttr.Name.Length + 1),
+                        name = extractedRefs[i].Substring(bestAttr.Name.Length + 1).ToLower(),
                         value = bestAttr.DefaultValue
                     });
                 }
