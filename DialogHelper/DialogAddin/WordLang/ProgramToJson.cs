@@ -102,7 +102,18 @@ namespace DialogAddin.WordLang
 
         public override string VisitDialogLine([NotNull] WordLangParser.DialogLineContext context)
         {
-            var speaker = Quotize(Visit(context.text()));
+            var speaker = "";
+            if (context.text() != null)
+            {
+                speaker = Quotize($"'{Visit(context.text())}'");
+            } else if (context.templatedText() != null)
+            {
+                speaker = Visit(context.templatedText());
+            }
+
+           // var 
+
+
             var line = Quotize(context.multilineText().GetText());
             var parts = Visit(context.multilineText());
             return $"{{\"speaker\":{speaker},\"content\":{line},\"parts\":{parts}}}";

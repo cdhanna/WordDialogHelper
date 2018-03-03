@@ -68,7 +68,7 @@ outcomeFunctionNamedBinding
 	;
 
 dialogLine
-	: COLON text NEWLINE multilineText NEWLINE
+	: COLON (text|templatedText) NEWLINE multilineText NEWLINE
 	;
 
 dialogLineSpeaker
@@ -150,7 +150,9 @@ boolLiteral
 stringLiteral
 	: (QUOTE (text|WHITESPACE?) QUOTE)
 	| (DBLQUOTE (text|WHITESPACE?) DBLQUOTE)
+	| (QUOTE_LEFT (text|WHITESPACE?) QUOTE_RIGHT)
 	;
+
 
 numLiteral
 	: INTEGER
@@ -269,6 +271,8 @@ NAME
 	: [a-zA-Z_] [a-zA-Z0-9_]*;
 
 DOT : '.';
+QUOTE_LEFT: '‘';
+QUOTE_RIGHT: '’';
 QUOTE : '\'';
 DBLQUOTE : '\"';
 APOSTROPHIE : '’';

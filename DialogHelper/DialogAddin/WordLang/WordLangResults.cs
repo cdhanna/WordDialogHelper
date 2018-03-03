@@ -17,6 +17,11 @@ namespace DialogAddin.WordLang
         public IList<IToken> Tokens { get; private set; }
         public WordLangResults(string src)
         {
+
+            src = src.Replace("‘", "'");
+            src = src.Replace("’", "'");
+            src = src.Replace("–", "-");
+
             var inputStream = new AntlrInputStream(src);
             var lexer = new WordLangLexer(inputStream);
             lexer.AddErrorListener(LexerErrors);

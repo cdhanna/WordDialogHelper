@@ -29,12 +29,19 @@ namespace DialogAddin.WordLang
 
                 var lexerErrorListener = new LexerErrorListener();
                 var parserErrorListener = new ParserErrorListener();
+                src = src.Replace("‘", "'");
+                src = src.Replace("’", "'");
+                src = src.Replace("–", "-");
+
 
                 var inputStream = new AntlrInputStream(src);
+
                 var lexer = new WordLangLexer(inputStream);
                 lexer.AddErrorListener(lexerErrorListener);
 
                 var tokenStream = new CommonTokenStream(lexer);
+                
+                
 
                 var parser = new WordLangParser(tokenStream);
                 parser.AddErrorListener(parserErrorListener);

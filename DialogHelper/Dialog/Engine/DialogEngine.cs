@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+
 namespace Dialog.Engine
 {
     public class DialogEngine
@@ -11,6 +13,9 @@ namespace Dialog.Engine
         private List<DialogRule> _rules = new List<DialogRule>();
         private List<DialogConditionSet> _conditionSets = new List<DialogConditionSet>();
         private List<EngineAdditionHandler> _onAdditionHandlers = new List<EngineAdditionHandler>();
+
+
+        private Dictionary<Regex, Func<string>> _transformers = new Dictionary<Regex, Func<string>>();
 
         public string[] GetHandlerNames
         {
@@ -24,8 +29,9 @@ namespace Dialog.Engine
 
         public DialogRule GetBestValidDialog()
         {
+            var transformer = BuildTransformFunction();
             var attrNameToValue = GetAttributeValueCodes();
-            var validRules = GetValidRules(attrNameToValue);
+            var validRules = GetValidRules(attrNameToValue, transformer);
             var bestRule = GetBestRule(validRules);
             return bestRule;
         }
@@ -33,7 +39,9 @@ namespace Dialog.Engine
         public DialogRule GetBestValidDialogForPlayer(string speaker="player")
         {
             var attrNameToValue = GetAttributeValueCodes();
-            var validRules = GetValidRules(attrNameToValue);
+            var transformer = BuildTransformFunction();
+
+            var validRules = GetValidRules(attrNameToValue, transformer);
             var bestRule = GetBestRuleForPlayer(validRules, speaker);
             return bestRule;
         }
@@ -41,14 +49,16 @@ namespace Dialog.Engine
         public List<DialogRule> GetAllValidDialog()
         {
             var attrNameToValue = GetAttributeValueCodes();
-            var validRules = GetValidRules(attrNameToValue);
+            var transformer = BuildTransformFunction();
+            var validRules = GetValidRules(attrNameToValue, transformer);
             return validRules;
         }
 
         public List<DialogRule> GetAllValidDialogForPlayer(string speaker="player")
         {
+            var transformer = BuildTransformFunction();
             var attrNameToValue = GetAttributeValueCodes();
-            var validRules = GetValidRules(attrNameToValue);
+            var validRules = GetValidRules(attrNameToValue, transformer);
             return validRules
                 .Where(r => r.Dialog.Count() > 0 && r.Dialog.First().Speaker.Equals(speaker))
                 .ToList();
@@ -164,45 +174,93 @@ namespace Dialog.Engine
             return this;
         }
         
+        public DialogEngine AddTransform(string replace, Func<string> to)
+        {
+            _transformers.Add(new Regex("^" + replace), to);
+            return this;
+        }
+
+        public Func<string, string> BuildTransformFunction()
+        {
+            return (input) =>
+            {
+                var output = input;
+
+                foreach (var kv in _transformers)
+                {
+                    output = kv.Key.Replace(output, kv.Value());
+                }
+                //Console.WriteLine("Querying " + output);
+                return output;
+            };
+        }
+
         public string[] ExecuteRuleDialogs(DialogRule rule)
         {
 
             var values = GetAttributeActualValues();
+            var transform = BuildTransformFunction();
             return rule.Dialog
-                .Select(d => String.Join("", d.ContentParts.Select(p => p.ProcessAsPrefixMathTyped(values))))
+                .Select(d => String.Join("", d.ContentParts.Select(p => p.ProcessAsPrefixMathTyped(values, transform))))
+                .ToArray();
+        }
+
+        public string[] ExecuteRuleSpeakers(DialogRule rule)
+        {
+            var values = GetAttributeActualValues();
+            var transform = BuildTransformFunction();
+
+            return rule.Dialog
+                .Select(d => String.Join("", d.Speaker.ProcessAsPrefixMathTyped(values, transform)))
                 .ToArray();
         }
 
         public void ExecuteRuleOutcomes(DialogRule rule)
         {
+            var exceptions = new List<Exception>();
             for (var i = 0; i < rule.Outcomes.Length; i++)
             {
-                var outcome = rule.Outcomes[i];
-                var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(outcome.Target.ToLower()));
-                if (targetAttribute == null)
+                try
                 {
-                    throw new Exception("Couldnt execute rule, because target attribute couldnt be found. " + outcome.Target);
-                }
-                var values = GetAttributeActualValues();
+                    var transform = BuildTransformFunction();
+                    var outcome = rule.Outcomes[i];
+                    //var targetAttribute = _attributes.g
+                    var transformedTargetName = transform(outcome.Target.ToLower()).ToLower();
+                    var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(transformedTargetName));
+                    if (targetAttribute == null)
+                    {
+                        throw new Exception("Couldnt execute rule, because target attribute couldnt be found. " + outcome.Target + " as " + transformedTargetName);
+                    }
+                    var values = GetAttributeActualValues();
 
-                switch (outcome.Command)
+                    switch (outcome.Command)
+                    {
+                        case "set":
+                            var value = outcome.Arguments[""].ProcessAsPrefixMathTyped(values, transform);
+                            targetAttribute.Invoke(value);
+                            break;
+                        case "run":
+                            var outputValues = new Dictionary<string, object>();
+                            foreach (var kv in outcome.Arguments)
+                            {
+                                outputValues.Add(kv.Key, kv.Value.ProcessAsPrefixMathTyped(values, transform));
+                            }
+                            targetAttribute.Invoke(outputValues);
+                            break;
+                        default:
+                            throw new NotImplementedException("Unknown outcome command " + outcome.Command);
+                    }
+                } catch (Exception ex)
                 {
-                    case "set":
-                        var value = outcome.Arguments[""].ProcessAsPrefixMathTyped(values);
-                        targetAttribute.Invoke(value);
-                        break;
-                    case "run":
-                        var outputValues = new Dictionary<string, object>();
-                        foreach (var kv in outcome.Arguments)
-                        {
-                            outputValues.Add(kv.Key, kv.Value.ProcessAsPrefixMathTyped(values));
-                        }
-                        targetAttribute.Invoke(outputValues);
-                        break;
-                    default:
-                        throw new NotImplementedException("Unknown outcome command " + outcome.Command);
+                    exceptions.Add(ex);
                 }
 
+            }
+
+            if (exceptions.Count > 0)
+            {
+                var allMessages = string.Join("\n", exceptions.Select(e => e.Message));
+                throw new Exception($"Failed to run all outcomes! {allMessages}");
             }
         }
 
@@ -229,8 +287,9 @@ namespace Dialog.Engine
             return values;
         }
 
-        private List<DialogRule> GetValidRules(Dictionary<string, long> attrNameToValue)
+        private List<DialogRule> GetValidRules(Dictionary<string, long> attrNameToValue, Func<string, string> transformer)
         {
+            var exceptions = new List<Exception>();
             var validRules = new List<DialogRule>();
             for (var i = 0; i < _rules.Count; i++)
             {
@@ -240,30 +299,36 @@ namespace Dialog.Engine
                 for (var j = 0; j < rule.Conditions.Length; j++)
                 {
                     var condition = rule.Conditions[j];
-
-                    var leftValue = condition.Left.ToLower().ProcessAsPrefixMath(attrNameToValue);
-                    var rightValue = condition.Right.ToLower().ProcessAsPrefixMath(attrNameToValue);
-
                     var matched = false;
-                    switch (condition.Op) // TODO add negation support
+
+                    try
                     {
-                        case "=":
-                            matched = leftValue == rightValue;
-                            break;
-                        case "!=":
-                        case "=!":
-                            matched = leftValue != rightValue;
-                            break;
-                        case ">":
-                        case "!<":
-                            matched = leftValue > rightValue;
-                            break;
-                        case "<":
-                        case ">!":
-                            matched = leftValue < rightValue;
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unknown operation type" + condition.Op);
+                        var leftValue = condition.Left.ToLower().ProcessAsPrefixMath(attrNameToValue, transformer);
+                        var rightValue = condition.Right.ToLower().ProcessAsPrefixMath(attrNameToValue, transformer);
+
+                        switch (condition.Op) // TODO add negation support
+                        {
+                            case "=":
+                                matched = leftValue == rightValue;
+                                break;
+                            case "!=":
+                            case "=!":
+                                matched = leftValue != rightValue;
+                                break;
+                            case ">":
+                            case "!<":
+                                matched = leftValue > rightValue;
+                                break;
+                            case "<":
+                            case ">!":
+                                matched = leftValue < rightValue;
+                                break;
+                            default:
+                                throw new InvalidOperationException("Unknown operation type" + condition.Op);
+                        }
+                    } catch (Exception ex)
+                    {
+                        exceptions.Add(ex);
                     }
 
                     isValidRule &= matched;
@@ -274,6 +339,13 @@ namespace Dialog.Engine
                 }
 
             }
+
+            for (var i = 0; i < exceptions.Count; i++)
+            {
+                var allMessages = String.Join("\n", exceptions.Select(e => e.Message));
+                Console.Error.WriteLine($"dialog rule EXCEPTION! {allMessages}");
+            }
+
             return validRules;
         }
         

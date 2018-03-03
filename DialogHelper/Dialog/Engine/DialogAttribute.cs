@@ -77,7 +77,7 @@ namespace Dialog.Engine
                 return obj.Equals(true) ? 1 : 0;
             }
 
-            throw new InvalidOperationException("Unknown type");
+            return obj.GetHashCode();
         }
 
     }

@@ -52,6 +52,8 @@ namespace Dialog.Engine
 
         public void Add(DialogEngine dEngine, TElem element)
         {
+            element.name = element.name.ToLower();
+
             if (!_nameToElement.ContainsKey(element.name))
             {
                 if (Elements.Contains(element) == false)

@@ -26,11 +26,12 @@ a nifty rule
    tunafish rep 
 conditions    
 player health + 50 > 100
+player x is ‘okay’
 use tunafish
 dialogs
 :player1        
 speaking {player health + 12} line text
-:player2
+:{player2.name}
 something <b>meaningful</b>
 :player3
 this is <color='red'> red text </color>
@@ -57,6 +58,12 @@ with target as enemy";
                         new DialogRule.DialogCondition()
                         {
                             Op = "=",
+                            Left = "player.x",
+                            Right = "'okay'"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Op = "=",
                             Left = "__.conditions.tunafish",
                             Right = "true"
                         }
@@ -65,7 +72,7 @@ with target as enemy";
                     {
                         new DialogRule.DialogPart()
                         {
-                            Speaker = "player1",
+                            Speaker = "'player1'",
                             Content = "speaking {player health + 12} line text",
                             ContentParts = new string[]
                             {
@@ -76,7 +83,7 @@ with target as enemy";
                         },
                         new DialogRule.DialogPart()
                         {
-                            Speaker = "player2",
+                            Speaker = "player2.name",
                             Content = "something <b>meaningful</b>",
                             ContentParts = new string[]
                             {
@@ -85,7 +92,7 @@ with target as enemy";
                         },
                         new DialogRule.DialogPart()
                         {
-                            Speaker = "player3",
+                            Speaker = "'player3'",
                             Content = "this is <color='red'> red text </color>",
                             ContentParts = new string[]
                             {

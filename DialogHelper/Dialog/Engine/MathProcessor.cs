@@ -59,11 +59,15 @@ namespace Dialog.Engine
             }
         }
 
-        public static object ProcessAsPrefixMathTyped(this string expression, Dictionary<string, object> variables = null)
+        public static object ProcessAsPrefixMathTyped(this string expression, Dictionary<string, object> variables = null, Func<string, string> transformer=null)
         {
             if (variables == null)
             {
                 variables = new Dictionary<string, object>();
+            }
+            if (transformer== null)
+            {
+                transformer = (s) => s;
             }
 
             
@@ -150,6 +154,8 @@ namespace Dialog.Engine
                         else
                         {
                             buildingSym = buildingSym.ToLower();
+                            buildingSym = transformer(buildingSym);
+
                             var value = variables.ExtractAttribute(buildingSym);
                             stack.Push(value);
                             //if (!variables.ContainsKey(buildingSym))
@@ -168,11 +174,15 @@ namespace Dialog.Engine
             return stack.Pop();
         }
 
-        public static long ProcessAsPrefixMath(this string expression, Dictionary<string, long> variables=null)
+        public static long ProcessAsPrefixMath(this string expression, Dictionary<string, long> variables=null, Func<string, string> transformer = null)
         {
             if (variables == null)
             {
                 variables = new Dictionary<string, long>();
+            }
+            if (transformer == null)
+            {
+                transformer = s => s;
             }
             var buildingSym = default(string);
             var stack = new Stack<long>();
@@ -248,6 +258,8 @@ namespace Dialog.Engine
                         }
                         else
                         {
+                            buildingSym = buildingSym.ToLower();
+                            buildingSym = transformer(buildingSym);
                             var value = variables.ExtractAttribute(buildingSym);
 
                             stack.Push(value);

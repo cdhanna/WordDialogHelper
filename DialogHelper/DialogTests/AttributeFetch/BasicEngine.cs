@@ -4,6 +4,7 @@ using Dialog.Engine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace DialogTests.AttributeFetch
 {
@@ -195,6 +196,58 @@ namespace DialogTests.AttributeFetch
             var best = engine.GetBestValidDialog();
             Assert.IsNotNull(best);
             Assert.AreEqual("I have full health!", best.Name);
+        }
+
+        [TestMethod]
+        public void SimpleEngineTransform()
+        {
+            var player = new Actor();
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "dialog.target.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    }
+                }
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine()
+                .AddTransform("dialog.target", () => "player");
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+        }
+
+        [TestMethod]
+        public void SimpleRegex()
+        {
+            var x = "dialog.target.test.x.y.z.dialog.target.d";
+            var r = new Regex("^dialog.target");
+            var outcome = r.Replace(x, "monkey");
+            Assert.AreEqual("monkey.test.x.y.z.dialog.target.d", outcome);
+
+
+            var outcome2 = r.Replace("dialog.speaker.test", "monkey");
+            Assert.AreEqual("dialog.speaker.test", outcome2);
         }
 
         [TestMethod]

@@ -125,7 +125,7 @@ namespace Dialog.Engine
                 var bestAttr = default(BagDialogAttribute<TData, TElem>);
                 for (var b = 0; b < _attribs.Count; b++)
                 {
-                    if (extractedRefs[i].StartsWith(_attribs[b].Name)
+                    if (extractedRefs[i].ToLower().StartsWith(_attribs[b].Name)
                         && (bestAttr == null
                             || _attribs[b].Name.Length >= bestAttr.Name.Length)
                             )
@@ -144,4 +144,5 @@ namespace Dialog.Engine
             }
         }
     }
+    
 }

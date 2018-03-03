@@ -31,6 +31,26 @@ set a to b
 
         }
 
+
+        [TestMethod]
+        public void SpeakerAsEpxression()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:{player.name}
+My name is a myster
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
         [TestMethod]
         public void DotDotDot()
         {
@@ -264,6 +284,26 @@ set a to b
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
 
         }
+
+        [TestMethod]
+        public void StupidQuotes()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is ‘okay’
+dialogs
+:plr
+This is okay
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
 
         [TestMethod]
         public void ToInVariable()
