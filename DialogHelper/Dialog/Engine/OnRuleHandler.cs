@@ -78,7 +78,7 @@ namespace Dialog.Engine
         {
             if (attrib is BagDialogAttribute<TData, TElem>)
             {
-                Console.WriteLine($"ADDING BAG ATTRIBUTE {typeof(TData).Name}, {typeof(TElem).Name}");
+                //Console.WriteLine($"ADDING BAG ATTRIBUTE {typeof(TData).Name}, {typeof(TElem).Name}");
                 _attribs.Add(attrib as BagDialogAttribute<TData, TElem>);
             }
             base.HandleNewAttribute(engine, attrib);

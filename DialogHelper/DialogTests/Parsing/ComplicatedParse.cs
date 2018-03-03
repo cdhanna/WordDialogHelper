@@ -32,6 +32,45 @@ set a to b
         }
 
         [TestMethod]
+        public void DotDotDot()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr
+hello world… 
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void AsInDisplayAs()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+Im as cool as you
+conditions
+x is y
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
         public void CommaInName()
         {
             var src = @"A Nifty Rule

@@ -44,12 +44,13 @@ namespace Dialog.Engine
             }
             try
             {
-                var e = GetExtensionMethods(Assembly.GetExecutingAssembly(), a.GetType());
-                if (e.Count() == 0)
+                var methods = typeof(MathExtensions).GetMethods();
+                //var e = GetExtensionMethods(Assembly.GetAssembly(typeof(MathExtensions)), a.GetType());
+                if (methods.Count() == 0)
                 {
                     throw new Exception("No extensions method exist for type");
                 }
-                var mi = e.FirstOrDefault(m => m.Name.Equals(method) && m.GetParameters().Length == 2 && m.GetParameters()[0].ParameterType == a.GetType() && m.GetParameters()[1].ParameterType == b.GetType());
+                var mi = methods.FirstOrDefault(m => m.Name.Equals(method) && m.GetParameters().Length == 2 && m.GetParameters()[0].ParameterType == a.GetType() && m.GetParameters()[1].ParameterType == b.GetType());
 
                 return mi.Invoke(null, new object[] { a, b });
             } catch (Exception ex)
