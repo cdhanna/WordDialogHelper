@@ -25,7 +25,7 @@ A Nifty Rule
  dispLaYaS 
 conditions
 x is y
-conditions tedToMelvin is true
+use tedToMelvin
 dialogs
 :plr
 hello world

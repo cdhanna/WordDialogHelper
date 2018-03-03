@@ -26,6 +26,7 @@ a nifty rule
    tunafish rep 
 conditions    
 player health + 50 > 100
+use tunafish
 dialogs
 :player1        
 speaking {player health + 12} line text
@@ -52,6 +53,12 @@ with target as enemy";
                             Op = ">",
                             Left = "(+ player.health 50)",
                             Right = "100"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Op = "=",
+                            Left = "__.conditions.tunafish",
+                            Right = "true"
                         }
                     },
                     Dialog = new DialogRule.DialogPart[]

@@ -29,26 +29,48 @@ namespace Dialog.Engine
 
     public class ConditionSetEvalHandler : EngineAdditionHandler
     {
-        public string GlobalName { get; private set; }
+        private Dictionary<string, List<DialogRule.DialogCondition>> _nameToSet = new Dictionary<string, List<DialogRule.DialogCondition>>();
 
-        public ConditionSetEvalHandler(string globalName)
+        public ConditionSetEvalHandler()
         {
-            GlobalName = globalName.ToLower();
+           // GlobalName = globalName.ToLower();
+        }
+
+        public override void HandleNewRule(DialogEngine engine, DialogRule rule, List<string> extractedRefs)
+        {
+
+            var conds = rule.Conditions.ToList();
+            var alreadyReplaced = new List<string>();
+            for (var i = 0; i < conds.Count; i++)
+            {
+                var cond = conds[i];
+                // try replacing left side...
+                var leftRefs = cond.Left.ExtractReferences().ToList();
+                if (leftRefs.Count == 1 && _nameToSet.ContainsKey(leftRefs[0]))
+                {
+                    if (alreadyReplaced.Contains(leftRefs[0]))
+                    {
+                        throw new Exception($"Invalid condition set usage. The condition set, {leftRefs[0]} has already been process for {rule.Name}, and doing so again would cause an infinite loop of darkness and despair.");
+                    }
+
+                    alreadyReplaced.Add(leftRefs[0]);
+                    conds.RemoveAt(i);
+                    _nameToSet[leftRefs[0]].ForEach(c => conds.Add(c));
+                    
+                    i = 0;
+                }
+                
+            }
+
+            rule.Conditions = conds.ToArray();
+            
+            base.HandleNewRule(engine, rule, extractedRefs);
         }
 
         public override void HandleNewConditionSet(DialogEngine engine, DialogConditionSet condition, List<string> extractedRefs)
         {
-            // add an attribute for every condition that is set.
-
-            engine.AddAttribute(DialogAttribute.New(GlobalName + "." + condition.Name,
-                v => { }, // ignore set
-                () =>
-                {
-                    //condition.Conditions.
-                    return false;
-                }
-            ));
-
+            _nameToSet.Add("__.conditions." + condition.Name.ToLower(),
+                condition.Conditions.Select(c => new DialogRule.DialogCondition() { Left = c.Left, Op = c.Op, Right = c.Right }).ToList());
             base.HandleNewConditionSet(engine, condition, extractedRefs);
         }
     }

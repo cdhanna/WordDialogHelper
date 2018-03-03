@@ -198,6 +198,306 @@ namespace DialogTests.AttributeFetch
         }
 
         [TestMethod]
+        public void SimpleEngineWithConditionSet()
+        {
+            var player = new Actor();
+            player.Health = player.MaxHealth;
+            var sets = new DialogConditionSet[]
+            {
+                new DialogConditionSet()
+                {
+                    Name = "test",
+                    Conditions = new DialogConditionSet.DialogCondition[]
+                    {
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = ">",
+                            Right = "1"
+                        },
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = ">",
+                            Right = "2"
+                        }
+                    }
+                }
+            };
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "__.conditions.test",
+                            Op = "=",
+                            Right = "true"
+                        }
+                    }
+                },
+                new DialogRule()
+                {
+                    Name = "I am less specific",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    }
+                },
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine().AddHandler(new ConditionSetEvalHandler());
+            sets.ToList().ForEach(r => engine.AddConditionSet(r));
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+        }
+
+        [TestMethod]
+        public void SimpleEngineWithConditionSetNested()
+        {
+            var player = new Actor();
+            player.Health = player.MaxHealth;
+            var sets = new DialogConditionSet[]
+            {
+                new DialogConditionSet()
+                {
+                    Name = "test",
+                    Conditions = new DialogConditionSet.DialogCondition[]
+                    {
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = ">",
+                            Right = "1"
+                        },
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = ">",
+                            Right = "2"
+                        }
+                    }
+                },
+                new DialogConditionSet()
+                {
+                    Name = "egg",
+                    Conditions = new DialogConditionSet.DialogCondition[]
+                    {
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "__.conditions.test",
+                            Op = "=",
+                            Right = "true"
+                        },
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.ammo",
+                            Op = ">",
+                            Right = "5"
+                        }
+                    }
+                }
+            };
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "__.conditions.egg",
+                            Op = "=",
+                            Right = "true"
+                        }
+                    }
+                },
+                new DialogRule()
+                {
+                    Name = "I am less specific",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    }
+                },
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine().AddHandler(new ConditionSetEvalHandler());
+            sets.ToList().ForEach(r => engine.AddConditionSet(r));
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void SimpleEngineWithConditionSetLoopDetected()
+        {
+            var player = new Actor();
+            player.Health = player.MaxHealth;
+            var sets = new DialogConditionSet[]
+            {
+                new DialogConditionSet()
+                {
+                    Name = "test",
+                    Conditions = new DialogConditionSet.DialogCondition[]
+                    {
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = ">",
+                            Right = "1"
+                        },
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "__.conditions.egg",
+                            Op = "=",
+                            Right = "true"
+                        }
+                    }
+                },
+                new DialogConditionSet()
+                {
+                    Name = "egg",
+                    Conditions = new DialogConditionSet.DialogCondition[]
+                    {
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "__.conditions.test",
+                            Op = "=",
+                            Right = "true"
+                        },
+                        new DialogConditionSet.DialogCondition()
+                        {
+                            Left = "player.ammo",
+                            Op = ">",
+                            Right = "5"
+                        }
+                    }
+                }
+            };
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+                    Name = "I have full health!",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "__.conditions.egg",
+                            Op = "=",
+                            Right = "true"
+                        }
+                    }
+                },
+                new DialogRule()
+                {
+                    Name = "I am less specific",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        },
+                        new DialogRule.DialogCondition()
+                        {
+                            Left = "player.health",
+                            Op = "=",
+                            Right = "player.maxHealth"
+                        }
+                    }
+                },
+            };
+
+            var attributes = new ObjectDialogAttribute[]
+            {
+                new ObjectDialogAttribute(player, "player", "health"),
+                new ObjectDialogAttribute(player, "player", "maxHealth"),
+                new ObjectDialogAttribute(player, "player", "ammo"),
+            };
+
+            var engine = new DialogEngine().AddHandler(new ConditionSetEvalHandler());
+            sets.ToList().ForEach(r => engine.AddConditionSet(r));
+            rules.ToList().ForEach(r => engine.AddRule(r));
+            attributes.ToList().ForEach(a => engine.AddAttribute(a));
+
+            var best = engine.GetBestValidDialog();
+            Assert.IsNotNull(best);
+            Assert.AreEqual("I have full health!", best.Name);
+        }
+
+        [TestMethod]
         public void SimpleEngine2()
         {
             var player = new Actor();

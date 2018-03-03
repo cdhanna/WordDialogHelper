@@ -111,9 +111,22 @@ namespace DialogAddin.WordLang
         public override string VisitConditions([NotNull] WordLangParser.ConditionsContext context)
         {
             var conds = context.booleanExpr()
-                .Select(ctx => Visit(ctx))
-                .CombineWithCommas();
-            return $"[{conds}]";
+                .Select(ctx => Visit(ctx));
+            var subs = context.substitute()
+                .Select(ctx => Visit(ctx));
+            var all = new List<string>();
+            all.AddRange(conds);
+            all.AddRange(subs);
+            var allSet = all.ToList();
+            var total = allSet.CombineWithCommas();
+
+            return $"[{total}]";
+        }
+
+        public override string VisitSubstitute([NotNull] WordLangParser.SubstituteContext context)
+        {
+            var left = Quotize("__.conditions." + TreeVisitor.Visit(context.referance()));
+            return $"{{\"op\":\"=\",\"left\":{left},\"right\":\"true\"}}";
         }
 
         public override string VisitBooleanExpr([NotNull] WordLangParser.BooleanExprContext context)
