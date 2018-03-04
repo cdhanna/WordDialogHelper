@@ -142,9 +142,13 @@ namespace Dialog.Engine
 
             for (var i = 0; i < rule?.Outcomes?.Length; i++)
             {
-                references.AddRange(rule.Outcomes[i].Target.ExtractReferences());
-                rule.Outcomes[i].Arguments.Values.Select(v => v.ExtractReferences())
-                    .ToList().ForEach(refs => references.AddRange(refs)) ;
+                if (rule?.Outcomes[i]?.Command != "pass")
+                {
+
+                    references.AddRange(rule.Outcomes[i].Target.ExtractReferences());
+                    rule.Outcomes[i].Arguments.Values.Select(v => v.ExtractReferences())
+                        .ToList().ForEach(refs => references.AddRange(refs)) ;
+                }
                 //references.AddRange(rule.Outcomes[i].Arguments.)
             }
 
@@ -224,6 +228,12 @@ namespace Dialog.Engine
                 {
                     var transform = BuildTransformFunction();
                     var outcome = rule.Outcomes[i];
+
+                    if (outcome.Command.Equals("pass"))
+                    {
+                        continue; // ignore this.
+                    }
+
                     //var targetAttribute = _attributes.g
                     var transformedTargetName = transform(outcome.Target.ToLower()).ToLower();
                     var targetAttribute = _attributes.FirstOrDefault(a => a.Name.ToLower().Equals(transformedTargetName));
@@ -246,6 +256,9 @@ namespace Dialog.Engine
                                 outputValues.Add(kv.Key, kv.Value.ProcessAsPrefixMathTyped(values, transform));
                             }
                             targetAttribute.Invoke(outputValues);
+                            break;
+                        case "pass":
+                            // do nothing
                             break;
                         default:
                             throw new NotImplementedException("Unknown outcome command " + outcome.Command);

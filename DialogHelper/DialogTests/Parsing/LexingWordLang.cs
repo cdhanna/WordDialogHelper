@@ -110,6 +110,45 @@ set a to b
         }
 
         [TestMethod]
+        public void DialogHasNumbers()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr
+this is the 5th time I ate 3 apple pies
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+        [TestMethod]
+        public void OutcomesCanPass()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+x is y
+dialogs
+:plr
+this is the 5th time I ate 3 apple pies
+outcomes
+pass
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
+
+
+        [TestMethod]
         public void ValidNegation_IsNot()
         {
             var src = @"A Nifty Rule

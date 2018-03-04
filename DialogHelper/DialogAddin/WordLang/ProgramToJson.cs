@@ -60,6 +60,10 @@ namespace DialogAddin.WordLang
             {
                 return Visit(context.outcomeFunction());
             }
+            if (context.outcomePass() != null)
+            {
+                return Visit(context.outcomePass());
+            }
             throw new InvalidOperationException();
         }
 
@@ -80,7 +84,11 @@ namespace DialogAddin.WordLang
             }
             return $"{{\"command\":\"run\",\"target\":{target},\"arguments\":{args}}}";
         }
+        public override string VisitOutcomePass([NotNull] WordLangParser.OutcomePassContext context)
+        {
+            return $"{{\"command\":\"pass\",\"target\":\"\",\"arguments\":\"\"}}";
 
+        }
         public override string VisitOutcomeFunctionNamedBindingList([NotNull] WordLangParser.OutcomeFunctionNamedBindingListContext context)
         {
             var ctx = context.outcomeFunctionNamedBinding();

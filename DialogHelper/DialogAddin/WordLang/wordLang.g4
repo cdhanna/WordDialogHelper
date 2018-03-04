@@ -47,6 +47,7 @@ outcomes
 singleOutcome
 	: outcomeFunction
 	| outcomeSetter
+	| outcomePass
 	;
 
 outcomeSetter
@@ -65,6 +66,9 @@ outcomeFunctionNamedBindingList
 
 outcomeFunctionNamedBinding
 	: (WITH referance AS expression)
+	;
+outcomePass
+	: PASS
 	;
 
 dialogLine
@@ -159,16 +163,16 @@ numLiteral
 	;
 
 text
-	: (WHITESPACE? (NAME|INTEGER|DOT|WHITESPACE|TO|SET|COMMA|TRUE|USE|FALSE|QUOTE|MODIFY|BY|AS|NEGATION|CONDITIONS|MAYBE|DOTDOTDOT | APOSTROPHIE) WHITESPACE?)+
+	: (WHITESPACE? (NAME|INTEGER|DOT|WHITESPACE|TO|SET|PASS|COMMA|TRUE|USE|FALSE|QUOTE|MODIFY|BY|AS|NEGATION|CONDITIONS|MAYBE|DOTDOTDOT | APOSTROPHIE) WHITESPACE?)+
 	;
 multilineText
 	: (freeText | templatedText)*
 	;
 freeText
-	: (WHITESPACE | NAME | NEWLINE | TO | SET | BY | CONDITIONS
+	: (WHITESPACE | NAME | NEWLINE | TO | SET | BY | CONDITIONS | INTEGER
 	| MODIFY |COMMA | EQUALTO | NEGATION | MAYBE | FALSE | AS | WITH | USE
 	| TRUE | DOT | POUND | LESSTHAN | GREATERTHAN |DOTDOTDOT | APOSTROPHIE
-	| DIVIDE | QUOTE | DBLQUOTE)+
+	| DIVIDE | QUOTE | DBLQUOTE | PASS)+
 	;
 
 templatedText
@@ -198,6 +202,7 @@ reservedWord
 	| RUN
 	| AS
 	| USE
+	| PASS
 	;
 
 /*
@@ -211,6 +216,7 @@ DISPLAYAS	: D I S P L A Y   A S   ;
 DIALOGS		: D I A L O G S         ;
 OUTCOMES	: O U T C O M E S       ;
 USE			: U S E					;
+PASS		: P A S S				;
 WHITESPACE          
 	: (' '|'\t')+ ;
 

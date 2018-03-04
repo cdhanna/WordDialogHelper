@@ -32,6 +32,7 @@ namespace DialogAddin.WordLang
                 src = src.Replace("‘", "'");
                 src = src.Replace("’", "'");
                 src = src.Replace("–", "-");
+                src = src.Replace("+", "+");
 
 
                 var inputStream = new AntlrInputStream(src);
