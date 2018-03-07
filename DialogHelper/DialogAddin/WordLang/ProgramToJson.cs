@@ -113,7 +113,7 @@ namespace DialogAddin.WordLang
             var speaker = "";
             if (context.text() != null)
             {
-                speaker = Quotize($"'{Visit(context.text())}'");
+                speaker = Quotize($"'{Visit(context.text()).AddEscapes()}'");
             } else if (context.templatedText() != null)
             {
                 speaker = Visit(context.templatedText());
@@ -224,7 +224,7 @@ namespace DialogAddin.WordLang
 
         public override string VisitFreeText([NotNull] WordLangParser.FreeTextContext context)
         {
-            return Quotize("'" + context.GetText() + "'");
+            return Quotize("'" + context.GetText().AddEscapes() + "'");
         }
 
         public override string VisitTemplatedText([NotNull] WordLangParser.TemplatedTextContext context)

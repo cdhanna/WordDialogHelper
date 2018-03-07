@@ -79,7 +79,7 @@ namespace Dialog.Engine
 
             var numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
-
+            bool stringMode = false;
             for (var i = expression.Length - 1; i > -1; i--)
             {
                 // read input stream looking for symbols, number, ), (, +, -, *, /
@@ -122,14 +122,20 @@ namespace Dialog.Engine
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        bool inString = false;
-                        while (j > -1 && (v != ' '||inString) ) //&& v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        while ((stringMode && j > -1) ||
+                             (v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-'))
                         {
                             if (v == '\'' || v == '"')
                             {
-                                inString = !inString;
+                                if (!(j > 0 && expression[j - 1] == '\\'))
+                                {
+                                    stringMode = !stringMode;
+                                }
                             }
-                            buildingSym = v + buildingSym;
+                            if (v != '\\')
+                            {
+                                buildingSym = v + buildingSym;
+                            }
                             j--;
                             v = j > -1 ? expression[j] : ' ';
                         }
@@ -190,8 +196,8 @@ namespace Dialog.Engine
             var right = default(long);
 
             var numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            
 
+            bool stringMode = false;
             for (var i = expression.Length - 1; i > -1; i --)
             {
                 // read input stream looking for symbols, number, ), (, +, -, *, /
@@ -231,18 +237,24 @@ namespace Dialog.Engine
                         break;
                     default:
                         // Symbol time!
-                        bool inString = false;
 
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        while (j > -1 && (v != ' ' || inString)) //(j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        while ((stringMode && j > -1) ||
+                            (v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-'))
                         {
                             if (v == '\'' || v == '"')
                             {
-                                inString = !inString;
+                                if (!(j > 0 && expression[j - 1] == '\\'))
+                                {
+                                    stringMode = !stringMode;
+                                }
                             }
-                            buildingSym = v + buildingSym;
+                            if (v != '\\')
+                            {
+                                buildingSym = v + buildingSym;
+                            }
                             j--;
                             v = j > -1 ? expression[j] : ' ';
                         }

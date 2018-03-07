@@ -19,6 +19,11 @@ namespace DialogAddin.WordLang
             return String.Join(",", collection);
         }
         
+        public static string AddEscapes(this string str)
+        {
+            return str.Replace("'", @"\\'");
+        }
+
         public static GeneralError NewError(this ParserRuleContext ctx, string message)
         {
             return GeneralError.New(ctx.Start.StartIndex, ctx.Stop.StopIndex, message);

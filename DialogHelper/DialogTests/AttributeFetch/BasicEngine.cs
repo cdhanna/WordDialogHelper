@@ -52,7 +52,16 @@ namespace DialogTests.AttributeFetch
 
         }
 
+        [TestMethod]
+        public void ResolvingRefsBigString()
+        {
+            var str = "'hello this is a \\'long string with some\\' odd characters in it'";
+            var extracted = str.ExtractReferences();
+            Assert.AreEqual(0, extracted.Count);
 
+            var output = str.ProcessAsPrefixMathTyped();
+            Assert.AreEqual("hello this is a 'long string with some' odd characters in it", output);
+        }
 
         [TestMethod]
         public void SimpleTemplateInterp()

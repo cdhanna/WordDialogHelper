@@ -96,7 +96,7 @@ with target as enemy";
                             Content = "this is <color='red'> red text </color>",
                             ContentParts = new string[]
                             {
-                                "'this is <color='red'> red text </color>'"
+                                "'this is <color=\\'red\\'> red text </color>'"
                             }
                         }
                     },
@@ -151,7 +151,7 @@ with target as enemy";
             var expected = JsonConvert.SerializeObject(bundle, Formatting.None, new JsonSerializerSettings()
             {
 
-                StringEscapeHandling = StringEscapeHandling.Default
+                StringEscapeHandling = StringEscapeHandling.EscapeNonAscii
             });
             //var expected = "[" +
             //    "{" +

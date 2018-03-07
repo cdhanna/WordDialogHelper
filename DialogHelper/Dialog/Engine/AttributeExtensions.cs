@@ -70,12 +70,15 @@ namespace Dialog.Engine
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        while ( stringMode || 
-                            (j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-'))
+                        while ( (stringMode && j > -1) || 
+                            (v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-'))
                         {
                             if (v == '\'' || v == '"')
                             {
-                                stringMode = !stringMode;
+                                if ( !(j > 0 && expression[j - 1] == '\\') )
+                                {
+                                    stringMode = !stringMode;
+                                }
                             }
                             buildingSym = v + buildingSym;
                             j--;
