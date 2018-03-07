@@ -323,6 +323,27 @@ set a to b
 
         }
 
+        [TestMethod]
+        public void AsInTheRuleName()
+        {
+            var src = @"Astronomy Assist
+ dispLaYaS 
+conditions
+player item 5 is 'cool'
+dialogs
+:plr
+This is okay
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+
+
+        }
+
 
         [TestMethod]
         public void ToInVariable()

@@ -231,11 +231,17 @@ namespace Dialog.Engine
                         break;
                     default:
                         // Symbol time!
+                        bool inString = false;
+
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        while (j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        while (j > -1 && (v != ' ' || inString)) //(j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
                         {
+                            if (v == '\'' || v == '"')
+                            {
+                                inString = !inString;
+                            }
                             buildingSym = v + buildingSym;
                             j--;
                             v = j > -1 ? expression[j] : ' ';
@@ -249,10 +255,14 @@ namespace Dialog.Engine
                         else if (buildingSym.Equals("false"))
                         {
                             stack.Push(0);
-                        } else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'"))
+                        }
+                        else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'") && buildingSym.Length > 1)
+
+                        //} else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'"))
                         {
                             stack.Push(buildingSym.Substring(1, buildingSym.Length - 2).ToLong());
-                        } else if (numbers.Contains(buildingSym[0]))
+                        }
+                        else if (numbers.Contains(buildingSym[0]))
                         {
                             stack.Push(int.Parse(buildingSym));
                         }

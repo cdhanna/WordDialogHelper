@@ -32,6 +32,10 @@ namespace Dialog.Engine
             }
         }
 
+        public static string NormalizeAttributeName(this string attributeName)
+        {
+            return attributeName.Replace(" ", ".").ToLower();
+        }
 
         public static List<string> ExtractReferences(this string expression)
         {
@@ -40,6 +44,7 @@ namespace Dialog.Engine
            
             var numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
+            var stringMode = false;
 
             for (var i = expression.Length - 1; i > -1; i--)
             {
@@ -65,8 +70,13 @@ namespace Dialog.Engine
                         buildingSym = "";
                         var j = i;
                         var v = c;
-                        while (j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-')
+                        while ( stringMode || 
+                            (j > -1 && v != ' ' && v != ')' && v != '(' && v != '+' && v != '*' && v != '/' && v != '-'))
                         {
+                            if (v == '\'' || v == '"')
+                            {
+                                stringMode = !stringMode;
+                            }
                             buildingSym = v + buildingSym;
                             j--;
                             v = j > -1 ? expression[j] : ' ';
@@ -83,7 +93,7 @@ namespace Dialog.Engine
                         }
                         else if (buildingSym.EndsWith("'") && buildingSym.StartsWith("'"))
                         {
-                            
+                            stringMode = !stringMode;
                         }
                         else if (numbers.Contains(buildingSym[0]))
                         {
@@ -91,7 +101,11 @@ namespace Dialog.Engine
                         }
                         else
                         {
-                            output.Add(buildingSym.ToLower());
+                            if (!stringMode)
+                            {
+                                output.Add(buildingSym.ToLower());
+
+                            }
                         }
 
 

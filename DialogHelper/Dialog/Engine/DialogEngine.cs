@@ -168,8 +168,17 @@ namespace Dialog.Engine
             return references.Distinct().ToList();
         }
 
+        public bool HasAttribute(string name)
+        {
+            return _attributes.FirstOrDefault(a => a.Name.Equals(name)) != null;
+        }
+
         public DialogEngine AddAttribute(DialogAttribute attribute)
         {
+            if (HasAttribute(attribute.Name))
+            {
+                throw new Exception($"Attribute already exists on dEngine. {attribute.Name}");
+            }
             for (var i = 0; i < _onAdditionHandlers.Count; i++)
             {
                 _onAdditionHandlers[i].HandleNewAttribute(this, attribute);
@@ -192,9 +201,11 @@ namespace Dialog.Engine
 
                 foreach (var kv in _transformers)
                 {
-                    output = kv.Key.Replace(output, kv.Value());
+                    //var value = kv.Value();
+                    //var normalizedValue = value.NormalizeAttributeName();
+                    output = kv.Key.Replace(output, kv.Value().NormalizeAttributeName());
+                //Console.WriteLine("Querying " + output + "/" + value + "/" + normalizedValue);
                 }
-                //Console.WriteLine("Querying " + output);
                 return output;
             };
         }
@@ -277,7 +288,7 @@ namespace Dialog.Engine
             }
         }
 
-        private Dictionary<string, object> GetAttributeActualValues()
+        public Dictionary<string, object> GetAttributeActualValues()
         {
             var values = new Dictionary<string, object>(); // attribute name -> value
             for (var i = 0; i < _attributes.Count; i++)
@@ -288,13 +299,17 @@ namespace Dialog.Engine
             }
             return values;
         }
-        private Dictionary<string, long> GetAttributeValueCodes()
+        public Dictionary<string, long> GetAttributeValueCodes()
         {
             var values = new Dictionary<string, long>(); // attribute name -> value
             for (var i = 0; i < _attributes.Count; i++)
             {
                 var attribute = _attributes[i];
                 attribute.Update();
+                if (values.ContainsKey(attribute.Name.ToLower()))
+                {
+                    throw new Exception($"Key already existed in value code table. GetAttributeValueCodes(). KEY {attribute.Name} {attribute.GetType().Name}");
+                }
                 values.Add(attribute.Name.ToLower(), attribute.CurrentValue);
             }
             return values;
@@ -341,7 +356,7 @@ namespace Dialog.Engine
                         }
                     } catch (Exception ex)
                     {
-                        exceptions.Add(ex);
+                        exceptions.Add(new Exception($"Rule: {rule.Name} Msg: {ex.Message}", ex));
                     }
 
                     isValidRule &= matched;

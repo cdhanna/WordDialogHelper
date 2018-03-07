@@ -204,7 +204,7 @@ namespace DialogAddin.WordLang
 
         public override string VisitText([NotNull] WordLangParser.TextContext context)
         {
-            return context.NAME().CombineTokens();
+            return context.GetText();
         }
 
         public override string VisitMultilineText([NotNull] WordLangParser.MultilineTextContext context)

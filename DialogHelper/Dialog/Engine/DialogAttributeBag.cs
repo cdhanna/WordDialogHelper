@@ -35,8 +35,8 @@ namespace Dialog.Engine
     {
         public List<TElem> Elements { get; private set; }
 
-        private Dictionary<string, TElem> _nameToElement = new Dictionary<string, TElem>();
-        private Dictionary<string, DialogAttribute> _nameToAttribute = new Dictionary<string, DialogAttribute>();
+        //private Dictionary<string, TElem> _nameToElement = new Dictionary<string, TElem>();
+        //private Dictionary<string, DialogAttribute> _nameToAttribute = new Dictionary<string, DialogAttribute>();
         public TData DefaultValue { get; set; }
 
         public BagDialogAttribute(string baseName, TData defaultValue, List<TElem> elements) : base(baseName)
@@ -52,16 +52,20 @@ namespace Dialog.Engine
 
         public void Add(DialogEngine dEngine, TElem element)
         {
+            element.name = element.name.Replace(" ", ".");
             element.name = element.name.ToLower();
+            var fullyQualifiedName = Name + "." + element.name;
 
-            if (!_nameToElement.ContainsKey(element.name))
+
+
+            Console.WriteLine($"ADDING BAG ELEMENT. NAME {fullyQualifiedName} TYPE {typeof(TElem).Name}");
+            if (!dEngine.HasAttribute(fullyQualifiedName))
             {
                 if (Elements.Contains(element) == false)
                 {
                     Elements.Add(element);
 
                 }
-                _nameToElement.Add(element.name, element);
 
                 dEngine.AddAttribute(DialogAttribute.New(Name + '.' + element.name, v => element.value = v, () => element.value));
 

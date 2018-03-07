@@ -55,7 +55,7 @@ namespace DialogTests.AttributeFetch
         [TestMethod]
         public void NumericalChains()
         {
-            var math = "(+ (* (/6(+ 1 2))4) 2)";
+            var math = "(+ (* (/ 6(+ 1 2)) 4) 2)";
             var result = math.ProcessAsPrefixMath();
             Assert.AreEqual(10, result);
         }
@@ -137,6 +137,13 @@ namespace DialogTests.AttributeFetch
             Assert.AreEqual(95, result);
         }
 
+        [TestMethod]
+        public void StringSubs()
+        {
+            var math = "'mr vol'";
+            var result = math.ProcessAsPrefixMath();
+            Assert.AreEqual("mr vol".ToLong(), result);
+        }
 
         [TestMethod]
         public void TypedSimpleAdd()

@@ -114,6 +114,15 @@ namespace Dialog.Engine
 
         public override void HandleNewRule(DialogEngine engine, DialogRule rule, List<string> extractedRefs)
         {
+
+            //if (rule.Name.Equals("Rule Introduce Yourself Chief Alchemist Vol"))
+            //{
+            //    Console.WriteLine("FOUND SPECIAL RULE");
+            //    Console.WriteLine(rule.Name);
+            //    Console.WriteLine("Extracted Refs ");
+            //    extractedRefs.ForEach(r => Console.WriteLine("\t" + r));
+            //}
+
             HandleRefs(engine, extractedRefs);
             base.HandleNewRule(engine, rule, extractedRefs);
         }
@@ -135,6 +144,9 @@ namespace Dialog.Engine
                 }
                 if (bestAttr != null)
                 {
+
+                    Console.WriteLine($"Found Ref {extractedRefs[i]} for {bestAttr.Name}");
+
                     bestAttr.Add(engine, new TElem()
                     {
                         name = extractedRefs[i].Substring(bestAttr.Name.Length + 1).ToLower(),

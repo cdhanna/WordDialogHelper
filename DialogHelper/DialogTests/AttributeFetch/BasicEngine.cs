@@ -25,6 +25,35 @@ namespace DialogTests.AttributeFetch
             }
         }
 
+
+        [TestMethod]
+        public void ResolvingRefs()
+        {
+            var str = "'mr vol'";
+            var extracted = str.ExtractReferences();
+            Assert.AreEqual(0, extracted.Count);
+
+        }
+
+        [TestMethod]
+        public void ResolvingRefs2()
+        {
+            var str = "TREASURY.CHEST";
+            var extracted = str.ExtractReferences();
+            Assert.AreEqual(1, extracted.Count);
+
+        }
+        [TestMethod]
+        public void ResolvingRefs3()
+        {
+            var str = "TREASURY CHEST";
+            var extracted = str.ExtractReferences();
+            Assert.AreEqual(2, extracted.Count);
+
+        }
+
+
+
         [TestMethod]
         public void SimpleTemplateInterp()
         {

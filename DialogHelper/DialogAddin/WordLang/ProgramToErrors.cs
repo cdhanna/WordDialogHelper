@@ -83,7 +83,7 @@ namespace DialogAddin.WordLang
 
             if (booleanExprCtxs == null || booleanExprCtxs.Count() == 0)
             {
-                errs.Add(context.NewError("You must have at least one Condition."));
+               // errs.Add(context.NewError("You must have at least one Condition."));
             } else
             {
                 booleanExprCtxs.Select(ctx => Visit(ctx))

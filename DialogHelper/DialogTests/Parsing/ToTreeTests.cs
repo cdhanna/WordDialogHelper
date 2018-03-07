@@ -44,7 +44,7 @@ with target as enemy";
             {
                 new DialogRule()
                 {
-                    
+
                     Name = "a nifty rule",
                     DisplayAs = "tunafish rep",
                     Conditions = new DialogRule.DialogCondition[]
@@ -122,7 +122,7 @@ with target as enemy";
                             }
                         }
                     }
-                    
+
                 }
             };
 
@@ -147,7 +147,7 @@ with target as enemy";
                     }
                 }
             };
-            
+
             var expected = JsonConvert.SerializeObject(bundle, Formatting.None, new JsonSerializerSettings()
             {
 
@@ -205,10 +205,96 @@ with target as enemy";
             Assert.AreEqual(backwards, bundle);
             Assert.AreEqual(expected, output);
 
-            
+
         }
 
-       
+        [TestMethod]
+        public void AsInTitle()
+        {
+            var src = @"
+an assist 
+displayAs 
+tunafish rep 
+conditions    
+player x is ‘mr vol’
+dialogs
+:player1        
+muffin ducker
+outcomes
+set x to y";
+
+            var rules = new DialogRule[]
+            {
+                new DialogRule()
+                {
+
+                    Name = "an assist",
+                    DisplayAs = "tunafish rep",
+                    Conditions = new DialogRule.DialogCondition[]
+                    {
+                        new DialogRule.DialogCondition()
+                        {
+                            Op = "=",
+                            Left = "player.x",
+                            Right = "'mr vol'"
+                        }
+                    },
+                    Dialog = new DialogRule.DialogPart[]
+                    {
+                        new DialogRule.DialogPart()
+                        {
+                            Speaker = "'player1'",
+                            Content = "muffin ducker",
+                            ContentParts = new string[]
+                            {
+                                "'muffin ducker'",
+                            }
+                        }
+                    },
+                    Outcomes = new DialogRule.DialogOutcome[]
+                    {
+                        new DialogRule.DialogOutcome()
+                        {
+                            Command = "set",
+                            Target = "x",
+                            Arguments = new Dictionary<string, string>()
+                            {
+                                { "", "y" }
+                            }
+                        }
+                    }
+
+                }
+            };
+
+            var bundle = new DialogBundle()
+            {
+                Name = "test",
+                Rules = rules,
+                ConditionSets = new DialogConditionSet[]
+                {
+                }
+            };
+
+            var expected = JsonConvert.SerializeObject(bundle, Formatting.None, new JsonSerializerSettings()
+            {
+                StringEscapeHandling = StringEscapeHandling.Default
+            });
+           
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+            var v = new ProgramToJson();
+            var output = v.Visit(program.ProgramContext);
+
+            Assert.IsNotNull(output);
+
+            var backwards = JsonConvert.DeserializeObject<DialogBundle>(output);
+            Assert.AreEqual(backwards, bundle);
+            Assert.AreEqual(expected, output);
+
+
+        }
 
     }
 }
