@@ -63,6 +63,7 @@
     <Compile Include="AttributeFetch\SimpleAttrTests.cs" />
     <Compile Include="AttributeFetch\BasicEngine.cs" />
     <Compile Include="AttributeFetch\BagAttrTest.cs" />
+    <Compile Include="AttributeFetch\VariableValidationTests.cs" />
     <Compile Include="Parsing\ComplicatedParse.cs" />
     <Compile Include="Parsing\ConditionSets.cs" />
     <Compile Include="Parsing\LexingMath.cs" />

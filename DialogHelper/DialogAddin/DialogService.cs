@@ -140,23 +140,26 @@ namespace DialogAddin
                 }
             }
 
-            compilerResults.Errors.ForEach(err =>
+            var errorLimit = compilerResults.Errors.Count;
+            if (ConfigHelper.Config.OptionShowFirstError)
             {
-                //allLines[err.Line]
+                errorLimit = Math.Min(1, compilerResults.Errors.Count);
+            }
+            for (var i = 0; i < errorLimit; i++)
+            {
+                var err = compilerResults.Errors[i];
                 var rangeStart = line2RangeStart[err.Line-1] + err.CharPosition ;
                 var rangeEnd = line2RangeStart[err.EndLine - 1] + err.EndCharPosition + 1;
 
                 rangeEnd = Math.Min(rangeEnd, doc.Range().End - 1);
                 rangeStart = Math.Min(rangeStart, rangeEnd);
 
-
-
                 object message = err.Message;
                 var comment = doc.Comments.Add(doc.Range(rangeStart, rangeEnd), ref message);
                 comment.Author = SYSTEM_NAME;
                 comment.ShowTip = true;
-
-            });
+            }
+           
 
             if (compilerResults.Errors.Count == 0)
             {

@@ -47,6 +47,8 @@ namespace DialogAddin.VariableVisual
         public string ManifestName { get { return "Tuna"; } }
         public int ManifestFileCount { get { return 43; } }
 
+        public Config Config { get { return ConfigHelper.Config; } }
+
 
         public void LoadVariablesFromFile(string fileName)
         {

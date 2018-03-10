@@ -52,9 +52,17 @@ namespace DialogAddin.WordLang
 
                 var errorVisitor = new ProgramToErrors(variabels);
 
+
                 var generalErrors = new List<GeneralError>();
                 generalErrors.AddRange(lexerErrorListener.Errors);
                 generalErrors.AddRange(parserErrorListener.Errors);
+
+                if (ConfigHelper.Config.OptionValidateVariables)
+                {
+                    var variableVisitor = new ProgramToVariableErrors(variabels);
+                    var variableErrors = variableVisitor.Visit(program);
+                    generalErrors.AddRange(variableErrors);
+                }
 
                 if (generalErrors.Count == 0)
                 {

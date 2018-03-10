@@ -3,3 +3,5 @@ int,player.health
 int,player.ammo
 int,player.money
 int,world.time
+bool*,player.flags
+int*,player.ints

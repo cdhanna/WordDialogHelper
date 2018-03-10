@@ -143,5 +143,15 @@ namespace DialogAddin.VariableVisual.Controls
                 Model.Client.StartConnection();
             }
         }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigHelper.Save();
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ConfigHelper.Save();
+        }
     }
 }

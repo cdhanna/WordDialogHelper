@@ -169,7 +169,7 @@ namespace DialogAddin.WordLang
 
         public override string VisitBooleanOpMain([NotNull] WordLangParser.BooleanOpMainContext context)
         {
-            if (context.EQUALTO() != null)
+            if (context.EQUALTO() != null || context.IS() != null)
             {
                 return "=";
             } else if (context.GREATERTHAN() != null)

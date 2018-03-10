@@ -62,5 +62,11 @@ namespace DialogAddin
 
         [JsonProperty("defaultCSVPath")]
         public string DefaultCSVPath { get; set; }
+
+        [JsonProperty("optionShowFirstError")]
+        public bool OptionShowFirstError { get; set; }
+
+        [JsonProperty("optionValidateVariables")]
+        public bool OptionValidateVariables { get; set; }
     }
 }

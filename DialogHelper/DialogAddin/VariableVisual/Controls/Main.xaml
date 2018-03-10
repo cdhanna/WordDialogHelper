@@ -55,6 +55,21 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <TabItem Header="Options" BorderBrush="{x:Null}">
+                <StackPanel Orientation="Vertical">
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Only Show First Error"></Label>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=Config.OptionShowFirstError}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"></CheckBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Use Validation"></Label>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=Config.OptionValidateVariables}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"></CheckBox>
+                    </StackPanel>
+
+                </StackPanel>
+            </TabItem>
         </TabControl>
 
     </Grid>

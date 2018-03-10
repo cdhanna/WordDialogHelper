@@ -363,5 +363,24 @@ set a to b
             Assert.AreEqual(false, program.ParserErrors.AnyErrors);
 
         }
+
+        [TestMethod]
+        public void IsInVariable()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS 
+conditions
+plr flags isCool is true
+dialogs
+:plr
+This isn't yours
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+
+        }
     }
 }

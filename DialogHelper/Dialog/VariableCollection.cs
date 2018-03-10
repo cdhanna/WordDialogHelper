@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dialog.Engine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,17 +21,41 @@ namespace Dialog
 
         public VariableCollection Add(string typeName, string fullName)
         {
+            
             return Add(new Variable()
             {
                 Type = typeName.ToLower(),
-                Path = fullName.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries)
+                Path = fullName.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries),
             });
         }
 
         public VariableCollection Add(Variable v)
         {
+            
             _variables.Add(v);
             return this;
+        }
+
+        public bool Exists(string name)
+        {
+            var normalized = name.NormalizeAttributeName();
+
+            var parts = normalized.Split('.');
+
+            var variable = _variables.FirstOrDefault(v =>
+            {
+                var fullName = v.FullName;
+                if (v.IsBag)
+                {
+                    return normalized.StartsWith(fullName);
+                } else
+                {
+                    return fullName.Equals(normalized);
+                }
+            });
+
+
+            return variable != null;
         }
 
         public Variable GetFromPath(string[] path)

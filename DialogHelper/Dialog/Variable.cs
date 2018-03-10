@@ -9,8 +9,8 @@ namespace Dialog
     {
         public string[] Path { get; set; }
         public string Type { get; set; }
-        public string FullName { get { return String.Join(".", Path); } }
-
+        public string FullName { get { return String.Join(".", Path).ToLower(); } }
+        public bool IsBag { get { return Type.EndsWith("*"); } }
 
     }
 }

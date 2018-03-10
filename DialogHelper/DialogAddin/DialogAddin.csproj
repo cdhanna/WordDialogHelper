@@ -236,6 +236,7 @@
     <Compile Include="WordLang\ProgramToErrors.cs" />
     <Compile Include="WordLang\ProgramToAST.cs" />
     <Compile Include="WordLang\ProgramToJson.cs" />
+    <Compile Include="WordLang\ProgramToVariableErrors.cs" />
     <Compile Include="WordLang\StandardErrorListener.cs" />
     <Compile Include="WordLang\WordLangCompiler.cs" />
     <Compile Include="WordLang\WordLangExtensions.cs" />
