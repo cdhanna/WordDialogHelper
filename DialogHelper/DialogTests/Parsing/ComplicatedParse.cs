@@ -310,7 +310,7 @@ set a to b
             var src = @"A Nifty Rule
  dispLaYaS 
 conditions
-player item 5 is 'cool'
+player item5 is 'cool'
 dialogs
 :plr
 This is okay
@@ -329,7 +329,7 @@ set a to b
             var src = @"Astronomy Assist
  dispLaYaS 
 conditions
-player item 5 is 'cool'
+player item5 is 'cool'
 dialogs
 :plr
 This is okay

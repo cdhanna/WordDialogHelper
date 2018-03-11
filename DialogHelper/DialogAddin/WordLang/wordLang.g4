@@ -134,7 +134,7 @@ referance
 	: allowedReferenceWords | allowedReferenceWords (referanceSeparator referance)?
 	;
 allowedReferenceWords
-	: NAME | CONDITIONS | AS | TO | WITH | MODIFY | IS | INTEGER
+	: NAME | CONDITIONS | AS | TO | WITH | MODIFY | IS 
 	;
 
 referanceSeparator

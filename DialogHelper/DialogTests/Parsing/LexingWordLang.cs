@@ -486,6 +486,25 @@ set a to b
         }
 
         [TestMethod]
+        public void ValidLiteralInt()
+        {
+            var src = @"A Nifty Rule
+ dispLaYaS
+monkey
+conditions
+x is 12
+dialogs
+:plr
+hello world
+outcomes
+set a to b
+";
+            var program = new WordLangResults(src);
+            Assert.AreEqual(false, program.LexerErrors.AnyErrors);
+            Assert.AreEqual(false, program.ParserErrors.AnyErrors);
+        }
+
+        [TestMethod]
         public void ValidLiteralStringWithSpace()
         {
             var src = @"A Nifty Rule
